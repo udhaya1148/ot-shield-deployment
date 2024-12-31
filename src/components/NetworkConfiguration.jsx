@@ -38,13 +38,22 @@ function NetworkConfiguration() {
       alert("IP Address and Subnet are mandatory fields!");
       return;
     }
-
+  
     // Validate gateway and routes
     if ((gateway && !routes) || (routes && !gateway)) {
       alert("Gateway and Routes must be provided together!");
       return;
     }
-
+  
+    // Validate routes format
+    const routePattern = /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})(,\s*\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})*$/;
+    if (routes && !routePattern.test(routes)) {
+      alert(
+        "Invalid routes format! Ensure each route follows the 'ip/subnet' format, e.g. 192.168.1.0/24"
+      );
+      return;
+    }
+  
     const payload = {
       interface: selectedInterface,
       new_interface_name: editedInterfaceName || selectedInterface, // Include the edited name
@@ -56,7 +65,7 @@ function NetworkConfiguration() {
       routes: routes ? routes.split(",").map((route) => route.trim()) : [],
       metric: metric ? parseInt(metric, 10) : null,
     };
-
+  
     fetch("/api1/update-network", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -76,8 +85,18 @@ function NetworkConfiguration() {
       })
       .catch((error) => console.error("Error updating network:", error));
   };
+  
+  // Function to check if an interface is editable (blocking enp6s0f0 and similar names)
+  const isEditable = (iface) => {
+    // Block editing if the interface name matches enp6s0f0 pattern
+    return !/^enp6s0f\d+$/.test(iface);
+  };
 
   const handleInterfaceSelect = (iface) => {
+    if (!isEditable(iface)) {
+      alert("This interface cannot be edited.");
+      return;
+    }
     setSelectedInterface(iface);
     setEditedInterfaceName(iface); // Prepopulate the edited name with the current interface name
     const selected = networkInfo[iface];
@@ -140,8 +159,11 @@ function NetworkConfiguration() {
               </div>
               <button
                 onClick={() => handleInterfaceSelect(iface)}
-                className="text-blue-500 hover:text-blue-700"
-                title="Edit Network Configuration"
+                className={`text-blue-500 hover:text-blue-700 ${
+                  isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
+                }`}
+                title={isEditable(iface) ? "Edit Network Configuration" : "Editing disabled for this interface"}
+                disabled={!isEditable(iface)}
               >
                 <FaEdit />
               </button>
@@ -234,7 +256,7 @@ function NetworkConfiguration() {
 
                 <div className="flex items-center mb-4">
                   <label className="w-1/3 text-left font-bold flex items-center justify-between">
-                    <span>Routes (comma-separated in ip/subnet format)</span>
+                    <span>Route (ip/subnet format)</span>
                     <span>:</span>
                   </label>
                   <input
