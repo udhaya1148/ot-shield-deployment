@@ -3,7 +3,7 @@
 # Set executable permissions for the scripts
 sudo chmod +x /usr/bin/ot-shield-testing/Scripts/arp-service.sh
 sudo chmod +x /usr/bin/ot-shield-testing/Scripts/network-configuration-service.sh
-sudo chmod +x /usr/bin/ot-shield-testing/Scripts/start-vite.sh
+sudo chmod +x /usr/bin/ot-shield-testing/Scripts/run-vite.sh
 sudo chmod +x /usr/bin/ot-shield-testing/Scripts/ui-script.sh
 sudo chmod +x /usr/bin/ot-shield-testing/Scripts/routes-script.sh
 
