@@ -4,7 +4,7 @@
 export PATH=$PATH:/usr/local/bin:/usr/bin
 
 # Navigate to the project directory
-cd /usr/bin/OT-Shield/PythonScript || exit 1
+cd /usr/bin/ot-shield-testing/PythonScript || exit 1
 
 # Ensure npm dependencies are installed
 npm install
