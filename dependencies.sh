@@ -4,8 +4,8 @@
 USERNAME=$(whoami)
 
 # Define source and destination directories for OT-Shield
-SOURCE_DIR="/home/$USERNAME/Chiefnet-OT-Shield"
-DEST_DIR="/usr/bin/Chiefnet-OT-Shield"
+SOURCE_DIR="/home/$USERNAME/ot-shield-testing"
+DEST_DIR="/usr/bin/ot-shield-testing"
 
 # Function to move a directory
 move_directory() {
