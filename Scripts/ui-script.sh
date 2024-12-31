@@ -9,7 +9,7 @@ Description=Flask Application with Auto-reload on Changes
 After=network.target
 
 [Service]
-ExecStart=/bin/bash /usr/bin/ot-shield-testing/Scripts/start-vite.sh
+ExecStart=/bin/bash /usr/bin/ot-shield-testing/Scripts/run-vite.sh
 Restart=always
 User=$USERNAME
 WorkingDirectory=/usr/bin/ot-shield-testing/PythonScript
