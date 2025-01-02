@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { BsFillArrowLeftCircleFill } from "react-icons/bs";
 import { MdOutlineDashboard, MdOutlineSettings } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
-import { FaTableCells } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 function SideMenu({ children }) {
@@ -15,22 +14,20 @@ function SideMenu({ children }) {
       name: "Dashboard",
       icon: MdOutlineDashboard,
       subItems: [
-        { name: "Dashboard 1", link: "/dashboard-1" },
-        { name: "Dashboard 2", link: "/dashboard-2" },
-        { name: "Dashboard 3", link: "/dashboard-3" },
+        { name: "ARP Table", link: "/arp" },
+        { name: "Routes", link: "/routes" },
       ],
     },
-    { name: "ARP Table", icon: FaTableCells, link: "/arp" },
-    { name: "Routes", icon: FaTableCells, link: "/routes" },
     {
       name: "Settings",
       icon: MdOutlineSettings,
       subItems: [
         { name: "Network Configuration", link: "/network-configuration" },
-        { name: "Add Static ARP", link:"/add-arp"},
-        { name: "Delete ARP", link:"/delete-arp"},
+        { name: "Add Static ARP", link:"/add-arp" },
+        { name: "Delete ARP", link:"/delete-arp" },
       ],
     },
+    { name: "Terminal", icon: FaHome, link: "/terminal" }, // Add Terminal menu item here
   ];
 
   const handleMenuClick = (menuIndex) => {
