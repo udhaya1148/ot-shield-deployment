@@ -27,7 +27,11 @@ function SideMenu({ children }) {
         { name: "Delete ARP", link:"/delete-arp" },
       ],
     },
-    { name: "Terminal", icon: FaHome, link: "/terminal" }, // Add Terminal menu item here
+    {
+      name: "Terminal",
+      icon: IoTerminal,
+      action: () => navigate("/terminal"), // Navigate to the terminal page
+    },
   ];
 
   const handleMenuClick = (menuIndex) => {
