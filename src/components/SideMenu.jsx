@@ -3,6 +3,7 @@ import { BsFillArrowLeftCircleFill } from "react-icons/bs";
 import { MdOutlineDashboard, MdOutlineSettings } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { IoTerminal } from "react-icons/io5";
 
 function SideMenu({ children }) {
   const [open, setOpen] = useState(false);
