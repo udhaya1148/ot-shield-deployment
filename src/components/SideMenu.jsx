@@ -27,11 +27,7 @@ function SideMenu({ children }) {
         { name: "Delete ARP", link:"/delete-arp" },
       ],
     },
-    {
-      name: "Terminal",
-      icon: IoTerminal,
-      action: () => navigate("/terminal"), // Navigate to the terminal page
-    },
+    { name: "Terminal", icon: IoTerminal, link: "/terminal" }
   ];
 
   const handleMenuClick = (menuIndex) => {
