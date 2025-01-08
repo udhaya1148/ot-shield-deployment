@@ -1,67 +1,59 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Terminal } from "xterm";
 import { io } from "socket.io-client";
-import "xterm/css/xterm.css"; // Import default xterm styles
+import "xterm/css/xterm.css";
 import SideMenu from "./SideMenu";
 
 function TerminalComponent() {
-  const commandBuffer = useRef(""); // Use ref to store the command buffer
+  const commandBuffer = useRef(""); // Current command being typed
+  const socket = useRef(null);
 
   useEffect(() => {
     const terminal = new Terminal({
       theme: {
-        background: "#000000", // Black background
-        foreground: "#FFFFFF", // White text
+        background: "#000000",
+        foreground: "#FFFFFF",
       },
-      cursorBlink: true, // Optional: Makes the cursor blink
+      cursorBlink: true,
     });
 
     terminal.open(document.getElementById("terminal"));
     terminal.write("Connecting to the SSH terminal...\r\n");
 
-    // JavaScript for the frontend (e.g., React component)
-    const socket = io.connect("172.18.1.208:5004"); // Adjust as needed
+    const cols = Math.floor(window.innerWidth / 8); // Character width in pixels
+    const rows = Math.floor(window.innerHeight / 18); // Character height in pixels
 
-    // Listen for terminal input directly
+    socket.current = io("http://172.18.1.229:5004"); // Replace with your backend server's IP/URL
+    socket.current.emit("resize", { cols, rows }); // Send terminal size to the backend
+
     terminal.onData((input) => {
-      if (input === '\u0008') {
-        // Backspace detected, remove last character from buffer
-        commandBuffer.current = commandBuffer.current.slice(0, -1);
-        terminal.write('\b \b'); // Visually remove the last character
-      } else if (input === '\r') {
-        // Enter key pressed, send the full command
-        socket.emit("terminal_input", { command: commandBuffer.current });
-        commandBuffer.current = ""; // Reset buffer after sending the command
-        terminal.write("\r\n"); // Move to a new line
-      } else {
-        // Append normal input to buffer
-        commandBuffer.current += input;
-        terminal.write(input); // Display the input on terminal
-      }
+      socket.current.emit("terminal_input", { data: input });
     });
 
-    // Receive terminal output
-    socket.on("terminal_output", (data) => {
+    socket.current.on("terminal_output", (data) => {
       terminal.write(data.output);
     });
 
+    const handleResize = () => {
+      const newCols = Math.floor(window.innerWidth / 8);
+      const newRows = Math.floor(window.innerHeight / 18);
+      terminal.resize(newCols, newRows);
+      socket.current.emit("resize", { cols: newCols, rows: newRows });
+    };
+
+    window.addEventListener("resize", handleResize);
+
     return () => {
-      socket.disconnect();
+      socket.current.disconnect();
       terminal.dispose();
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   return (
-    <div className="flex h-screen w-screen mt=10">
+    <div className="flex flex-row h-screen w-screen">
       <SideMenu />
-      <div
-        id="terminal"
-        style={{
-          height: "100vh",
-          width: "100%",
-          backgroundColor: "#000000", // Fallback for the container
-        }}
-      />
+      <div id="terminal" style={{ height: "100vh", width: "100%" }} />
     </div>
   );
 }
