@@ -9,17 +9,14 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SECRET_KEY'] = 'your_secret_key'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# SSH Configuration
-SSH_HOST = '172.18.1.208'
+SSH_HOST = '172.18.1.229'
 SSH_PORT = 22
 SSH_USERNAME = 'netcon'
 SSH_PASSWORD = 'netcon'
 
-# Dictionary to store SSH session information
-ssh_connect = {}
+ssh_sessions = {}
 
-# Function to handle SSH connection
-def ssh_connect_handler(sid):
+def ssh_connect_handler(sid, cols=80, rows=24):
     try:
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -30,69 +27,54 @@ def ssh_connect_handler(sid):
             password=SSH_PASSWORD,
             timeout=10
         )
-        
-        # Open an interactive shell session
-        channel = ssh_client.invoke_shell()
-        ssh_connect[sid] = channel
-        print(f"SSH session established for {sid}")
+        channel = ssh_client.invoke_shell(term='xterm', width=cols, height=rows)
+        ssh_sessions[sid] = channel
 
-        # Continuously read and send data from the SSH channel to the client
-        while True:
+        while not channel.closed:
             if channel.recv_ready():
-                output = ""
-                while channel.recv_ready():
-                    output += channel.recv(1024).decode()
+                output = channel.recv(1024).decode("utf-8")
                 socketio.emit('terminal_output', {'output': output}, room=sid)
+            socketio.sleep(0.01)
 
     except Exception as e:
         socketio.emit('error', {'message': str(e)}, room=sid)
-        print(f"Error for {sid}: {str(e)}")
 
     finally:
-        if sid in ssh_connect:
-            ssh_connect[sid].close()
-            del ssh_connect[sid]
-        print(f"SSH connection for {sid} closed.")
+        if sid in ssh_sessions:
+            ssh_sessions[sid].close()
+            del ssh_sessions[sid]
 
-# Handle WebSocket connection
 @socketio.on('connect')
 def handle_connect():
     sid = request.sid
-    print(f"Client connected: {sid}")
-    threading.Thread(target=ssh_connect_handler, args=(sid,)).start()
+    cols, rows = 80, 24  # Default size
+    threading.Thread(target=ssh_connect_handler, args=(sid, cols, rows)).start()
 
-# Handle terminal input from the client
+@socketio.on('resize')
+def handle_resize(data):
+    sid = request.sid
+    if sid in ssh_sessions:
+        channel = ssh_sessions[sid]
+        if channel:
+            cols = data.get('cols', 80)
+            rows = data.get('rows', 24)
+            channel.resize_pty(width=cols, height=rows)
+
 @socketio.on('terminal_input')
 def handle_terminal_input(data):
     sid = request.sid
-    command = data.get('command', '')
-
-    if not command.strip():
-        print(f"User {sid} pressed Enter with no command.")
-        return
-
-    if sid in ssh_connect:
-        channel = ssh_connect[sid]
+    input_data = data.get('data', '')
+    if sid in ssh_sessions:
+        channel = ssh_sessions[sid]
         if channel:
-            try:
-                channel.send(command + '\n')
-                print(f"Command sent from {sid}: {command}")
-            except Exception as e:
-                print(f"Error sending command for {sid}: {str(e)}")
-                socketio.emit('error', {'message': str(e)}, room=sid)
-        else:
-            print(f"No active SSH channel for {sid}.")
-            socketio.emit('error', {'message': 'No active SSH channel'}, room=sid)
+            channel.send(input_data)
 
-# Handle WebSocket disconnection
 @socketio.on('disconnect')
 def handle_disconnect():
     sid = request.sid
-    if sid in ssh_connect:
-        ssh_connect[sid].close()
-        del ssh_connect[sid]
-    print(f"Client {sid} disconnected and cleaned up.")
+    if sid in ssh_sessions:
+        ssh_sessions[sid].close()
+        del ssh_sessions[sid]
 
-# Start the Flask app with SocketIO
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5004)
