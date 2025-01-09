@@ -62,10 +62,6 @@ else
     exit 1
 fi
 
-# Install Python pip and keyboard module
-#sudo apt install -y python3-pip || { echo "Failed to install python3-pip"; exit 1; }
-#sudo pip3 install keyboard || { echo "Failed to install Python keyboard module"; exit 1; }
-
 # Install Python pip and virtual environment
 sudo apt install -y python3-pip python3-venv || { echo "Failed to install python3-pip and python3-venv"; exit 1; }
 
@@ -82,5 +78,9 @@ pip install keyboard || { echo "Failed to install Python keyboard module"; exit 
 # Deactivate the virtual environment
 deactivate
 
+# Install required dependencies in the virtual environment
+echo "Activating virtual environment and installing dependencies..."
+source "/usr/bin/ot-shield-testing/PythonScript/myenv/bin/activate"
+pip install flask flask-socketio gunicorn eventlet
 
 echo "Setup complete!"
