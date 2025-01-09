@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# Set executable permissions for the scripts
-sudo chmod +x /usr/bin/ot-shield-testing/Scripts/arp-service.sh
-sudo chmod +x /usr/bin/ot-shield-testing/Scripts/network-configuration-service.sh
-sudo chmod +x /usr/bin/ot-shield-testing/Scripts/run-vite.sh
-sudo chmod +x /usr/bin/ot-shield-testing/Scripts/ui-script.sh
-sudo chmod +x /usr/bin/ot-shield-testing/Scripts/routes-script.sh
-
 echo "Permissions updated for all scripts."
 
 cd /usr/bin/ot-shield-testing/Scripts/
@@ -26,6 +19,10 @@ sudo ./ui-script.sh
 
 echo "Running default-config-script.sh..."
 sudo ./default-config-service.sh
+
+echo "Running terminal.sh..."
+sudo ./terminal-service.sh
+
 
 echo "All scripts executed successfully."
 
