@@ -36,13 +36,12 @@ function TerminalComponent() {
 
       // Check if the output contains the logout message and redirect
       if (data.output.includes("logout\r\nConnection closed.\r\n")) {
-        console.log("Logout detected. Redirecting to home...");
-        terminal.write("\r\nSession ended. You can close the terminal.\r\n");
+        terminal.write("\r\nSession ended. \r\n");
 
         // Delay before redirecting to allow the user to see the logout message
         setTimeout(() => {
           navigate("/");  // Redirect to the home page
-        }, 2000);  // 2-second delay before redirect
+        }, 3000);  
       }
     });
 
