@@ -2,11 +2,12 @@ import React, { useEffect, useRef } from "react";
 import { Terminal } from "xterm";
 import { io } from "socket.io-client";
 import "xterm/css/xterm.css";
+import { useNavigate } from "react-router-dom";
 import SideMenu from "./SideMenu";
 
 function TerminalComponent() {
-  const commandBuffer = useRef(""); // Current command being typed
   const socket = useRef(null);
+  const navigate = useNavigate();  // Ensure this is defined
 
   useEffect(() => {
     const terminal = new Terminal({
@@ -20,11 +21,11 @@ function TerminalComponent() {
     terminal.open(document.getElementById("terminal"));
     terminal.write("Connecting to the SSH terminal...\r\n");
 
-    const cols = Math.floor(window.innerWidth / 8); // Character width in pixels
-    const rows = Math.floor(window.innerHeight / 18); // Character height in pixels
+    const cols = Math.floor(window.innerWidth / 8);
+    const rows = Math.floor(window.innerHeight / 18);
 
-    socket.current = io("http://172.18.1.230:5004"); // Replace with your backend server's IP/URL
-    socket.current.emit("resize", { cols, rows }); // Send terminal size to the backend
+    socket.current = io("http://172.18.1.229:5004");  // Make sure the backend is running on this IP
+    socket.current.emit("resize", { cols, rows });
 
     terminal.onData((input) => {
       socket.current.emit("terminal_input", { data: input });
@@ -32,9 +33,16 @@ function TerminalComponent() {
 
     socket.current.on("terminal_output", (data) => {
       terminal.write(data.output);
-      if (data.output === 'logout\r\nConnection closed.\r\n') {
-        // Handle logout and connection closed output here
+
+      // Check if the output contains the logout message and redirect
+      if (data.output.includes("logout\r\nConnection closed.\r\n")) {
+        console.log("Logout detected. Redirecting to home...");
         terminal.write("\r\nSession ended. You can close the terminal.\r\n");
+
+        // Delay before redirecting to allow the user to see the logout message
+        setTimeout(() => {
+          navigate("/");  // Redirect to the home page
+        }, 2000);  // 2-second delay before redirect
       }
     });
 
@@ -52,7 +60,7 @@ function TerminalComponent() {
       terminal.dispose();
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="flex flex-row h-screen w-screen">
