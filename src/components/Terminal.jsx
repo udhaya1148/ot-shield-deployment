@@ -23,7 +23,7 @@ function TerminalComponent() {
     const cols = Math.floor(window.innerWidth / 8); // Character width in pixels
     const rows = Math.floor(window.innerHeight / 18); // Character height in pixels
 
-    socket.current = io("http://172.18.1.229:5004"); // Replace with your backend server's IP/URL
+    socket.current = io("http://172.18.1.230:5004"); // Replace with your backend server's IP/URL
     socket.current.emit("resize", { cols, rows }); // Send terminal size to the backend
 
     terminal.onData((input) => {
@@ -32,6 +32,10 @@ function TerminalComponent() {
 
     socket.current.on("terminal_output", (data) => {
       terminal.write(data.output);
+      if (data.output === 'logout\r\nConnection closed.\r\n') {
+        // Handle logout and connection closed output here
+        terminal.write("\r\nSession ended. You can close the terminal.\r\n");
+      }
     });
 
     const handleResize = () => {
