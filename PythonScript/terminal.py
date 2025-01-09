@@ -9,7 +9,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SECRET_KEY'] = 'your_secret_key'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-SSH_HOST = '172.18.1.229'
+SSH_HOST = '172.18.1.230'
 SSH_PORT = 22
 SSH_USERNAME = 'netcon'
 SSH_PASSWORD = 'netcon'
@@ -36,6 +36,10 @@ def ssh_connect_handler(sid, cols=80, rows=24):
                 socketio.emit('terminal_output', {'output': output}, room=sid)
             socketio.sleep(0.01)
 
+        # Check if the SSH channel has closed and emit a logout message
+        if sid in ssh_sessions:
+            socketio.emit('terminal_output', {'output': '\r\nlogout\r\nConnection closed.\r\n'}, room=sid)
+
     except Exception as e:
         socketio.emit('error', {'message': str(e)}, room=sid)
 
@@ -43,6 +47,7 @@ def ssh_connect_handler(sid, cols=80, rows=24):
         if sid in ssh_sessions:
             ssh_sessions[sid].close()
             del ssh_sessions[sid]
+
 
 @socketio.on('connect')
 def handle_connect():
