@@ -3,6 +3,8 @@ from flask_socketio import SocketIO, emit
 import paramiko
 import threading
 from flask_cors import CORS
+import os
+import subprocess
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -78,8 +80,22 @@ def handle_terminal_input(data):
 def handle_disconnect():
     sid = request.sid
     if sid in ssh_sessions:
-        ssh_sessions[sid].close()
+        channel = ssh_sessions[sid]
+        if channel and not channel.closed:
+            channel.close()
         del ssh_sessions[sid]
+    print(f"Session {sid} disconnected and cleaned up.")
 
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5004)
+
+if __name__ == "__main__":
+
+    script_filename = os.path.basename(__file__).replace('.py', '')
+    app_module = f"{script_filename}:app"
+
+    subprocess.run([
+    'gunicorn',
+    '-w', '1',  # Number of worker processes
+    '-k', 'eventlet',  # Use eventlet worker
+    '-b', '0.0.0.0:5004',  # Bind to 0.0.0.0:5004
+    app_module  # Pass the module name dynamically
+])
