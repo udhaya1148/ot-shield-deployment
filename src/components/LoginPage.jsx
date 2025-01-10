@@ -11,7 +11,7 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://<flask-backend-ip>:5005/login", { username, password });
+      const response = await axios.post("/api5/login", { username, password });
       if (response.data.success) {
         alert("Login successful!");
         
