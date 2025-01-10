@@ -82,4 +82,13 @@ def handle_disconnect():
     print(f"Session {sid} disconnected and cleaned up.")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    script_filename = os.path.basename(__file__).replace('.py', '')
+    app_module = f"{script_filename}:app"
+
+    subprocess.run([
+        'gunicorn',
+        '-w', '1',  # Number of worker processes
+        '-k', 'eventlet',  # Use eventlet worker
+        '-b', '0.0.0.0:5004',  # Bind to 0.0.0.0:5004
+        app_module  # Pass the module name dynamically
+    ])
