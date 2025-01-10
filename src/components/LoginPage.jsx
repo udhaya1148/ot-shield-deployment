@@ -11,10 +11,15 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api5/login", { username, password });
+      const response = await axios.post("http://<flask-backend-ip>:5005/login", { username, password });
       if (response.data.success) {
         alert("Login successful!");
-        navigate("/home"); // Redirect to the home route
+        
+        // Save credentials in local storage
+        localStorage.setItem("username", username);
+        localStorage.setItem("password", password);
+
+        navigate("/terminal"); // Redirect to terminal page after successful login
       } else {
         setError(response.data.message || "Invalid credentials");
       }
