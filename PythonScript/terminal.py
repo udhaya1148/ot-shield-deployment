@@ -8,15 +8,14 @@ import subprocess
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Remove the hardcoded credentials
 ssh_sessions = {}
 
-def ssh_connect_handler(sid, username, password, cols=80, rows=24):
+def ssh_connect_handler(sid, username, password, target_ip, cols=80, rows=24):
     try:
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh_client.connect(
-            '172.18.1.231',
+            target_ip,  # Use the dynamically passed target IP address
             port=22,
             username=username,  # Use the dynamically passed username
             password=password,  # Use the dynamically passed password
@@ -31,7 +30,6 @@ def ssh_connect_handler(sid, username, password, cols=80, rows=24):
                 socketio.emit('terminal_output', {'output': output}, room=sid)
             socketio.sleep(0.01)
 
-        # Check if the SSH channel has closed and emit a logout message
         if sid in ssh_sessions:
             socketio.emit('terminal_output', {'output': '\r\nlogout\r\nConnection closed.\r\n'}, room=sid)
 
@@ -46,14 +44,14 @@ def ssh_connect_handler(sid, username, password, cols=80, rows=24):
 @socketio.on('connect')
 def handle_connect():
     sid = request.sid
-    # Retrieve credentials (for example from the front-end or local storage)
-    username = request.args.get('username')  # Or use cookies or headers
-    password = request.args.get('password')  # Or use cookies or headers
+    username = request.args.get('username')  # Get credentials from query params
+    password = request.args.get('password')  # Get password from query params
+    target_ip = request.args.get('ip')  # Get the IP address from query params
 
-    if username and password:
-        threading.Thread(target=ssh_connect_handler, args=(sid, username, password)).start()
+    if username and password and target_ip:
+        threading.Thread(target=ssh_connect_handler, args=(sid, username, password, target_ip)).start()
     else:
-        emit('error', {'message': 'Missing credentials'}, room=sid)
+        emit('error', {'message': 'Missing credentials or IP address'}, room=sid)
 
 @socketio.on('resize')
 def handle_resize(data):
