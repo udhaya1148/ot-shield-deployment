@@ -1,32 +1,24 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, emit
 import paramiko
 import threading
-from flask_cors import CORS
 import os
 import subprocess
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
-app.config['SECRET_KEY'] = 'your_secret_key'
 socketio = SocketIO(app, cors_allowed_origins="*")
-
-SSH_HOST = '172.18.1.230'
-SSH_PORT = 22
-SSH_USERNAME = 'netcon'
-SSH_PASSWORD = 'netcon'
 
 ssh_sessions = {}
 
-def ssh_connect_handler(sid, cols=80, rows=24):
+def ssh_connect_handler(sid, username, password, cols=80, rows=24):
     try:
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh_client.connect(
-            SSH_HOST,
-            port=SSH_PORT,
-            username=SSH_USERNAME,
-            password=SSH_PASSWORD,
+            '172.18.1.231',
+            port=22,
+            username=username,  # Use the dynamically passed username
+            password=password,  # Use the dynamically passed password
             timeout=10
         )
         channel = ssh_client.invoke_shell(term='xterm', width=cols, height=rows)
@@ -38,7 +30,6 @@ def ssh_connect_handler(sid, cols=80, rows=24):
                 socketio.emit('terminal_output', {'output': output}, room=sid)
             socketio.sleep(0.01)
 
-        # Check if the SSH channel has closed and emit a logout message
         if sid in ssh_sessions:
             socketio.emit('terminal_output', {'output': '\r\nlogout\r\nConnection closed.\r\n'}, room=sid)
 
@@ -50,12 +41,16 @@ def ssh_connect_handler(sid, cols=80, rows=24):
             ssh_sessions[sid].close()
             del ssh_sessions[sid]
 
-
 @socketio.on('connect')
 def handle_connect():
     sid = request.sid
-    cols, rows = 80, 24  # Default size
-    threading.Thread(target=ssh_connect_handler, args=(sid, cols, rows)).start()
+    username = request.args.get('username')  # Get credentials from query params
+    password = request.args.get('password')
+
+    if username and password:
+        threading.Thread(target=ssh_connect_handler, args=(sid, username, password)).start()
+    else:
+        emit('error', {'message': 'Missing credentials'}, room=sid)
 
 @socketio.on('resize')
 def handle_resize(data):
@@ -86,16 +81,5 @@ def handle_disconnect():
         del ssh_sessions[sid]
     print(f"Session {sid} disconnected and cleaned up.")
 
-
 if __name__ == "__main__":
-
-    script_filename = os.path.basename(__file__).replace('.py', '')
-    app_module = f"{script_filename}:app"
-
-    subprocess.run([
-    'gunicorn',
-    '-w', '1',  # Number of worker processes
-    '-k', 'eventlet',  # Use eventlet worker
-    '-b', '0.0.0.0:5004',  # Bind to 0.0.0.0:5004
-    app_module  # Pass the module name dynamically
-])
+    app.run(debug=True)
