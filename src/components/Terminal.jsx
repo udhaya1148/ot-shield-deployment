@@ -24,7 +24,19 @@ function TerminalComponent() {
     const cols = Math.floor(window.innerWidth / 8);
     const rows = Math.floor(window.innerHeight / 18);
 
-    socket.current = io("http://172.18.1.229:5004");  // Make sure the backend is running on this IP
+    // Get credentials from local storage
+    const username = localStorage.getItem("username");
+    const password = localStorage.getItem("password");
+
+    if (!username || !password) {
+      navigate("/login");  // Redirect to login if no credentials are found
+      return;
+    }
+
+    // Establish the WebSocket connection with credentials as query params
+    socket.current = io("http://172.18.1.231:5004", {
+      query: { username, password }
+    });
     socket.current.emit("resize", { cols, rows });
 
     terminal.onData((input) => {
@@ -40,7 +52,7 @@ function TerminalComponent() {
 
         // Delay before redirecting to allow the user to see the logout message
         setTimeout(() => {
-          navigate("/");  // Redirect to the home page
+          navigate("/home");  // Redirect to the home page
         }, 3000);  
       }
     });
