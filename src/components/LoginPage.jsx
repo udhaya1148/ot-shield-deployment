@@ -6,7 +6,10 @@ function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Hook to handle navigation
+  const navigate = useNavigate();
+
+  // Extract IP address from URL
+  const ip = window.location.hostname;  // Get IP address from the current URL
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -14,12 +17,13 @@ function LoginPage() {
       const response = await axios.post("/api5/login", { username, password });
       if (response.data.success) {
         alert("Login successful!");
-        
-        // Save credentials in local storage
+
+        // Save credentials and IP in local storage
         localStorage.setItem("username", username);
         localStorage.setItem("password", password);
+        localStorage.setItem("ip", ip); // Store the extracted IP address
 
-        navigate("/terminal"); // Redirect to terminal page after successful login
+        navigate("/home"); // Redirect to home page after successful login
       } else {
         setError(response.data.message || "Invalid credentials");
       }
