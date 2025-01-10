@@ -8,6 +8,7 @@ import subprocess
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+# Remove the hardcoded credentials
 ssh_sessions = {}
 
 def ssh_connect_handler(sid, username, password, cols=80, rows=24):
@@ -30,6 +31,7 @@ def ssh_connect_handler(sid, username, password, cols=80, rows=24):
                 socketio.emit('terminal_output', {'output': output}, room=sid)
             socketio.sleep(0.01)
 
+        # Check if the SSH channel has closed and emit a logout message
         if sid in ssh_sessions:
             socketio.emit('terminal_output', {'output': '\r\nlogout\r\nConnection closed.\r\n'}, room=sid)
 
@@ -44,8 +46,9 @@ def ssh_connect_handler(sid, username, password, cols=80, rows=24):
 @socketio.on('connect')
 def handle_connect():
     sid = request.sid
-    username = request.args.get('username')  # Get credentials from query params
-    password = request.args.get('password')
+    # Retrieve credentials (for example from the front-end or local storage)
+    username = request.args.get('username')  # Or use cookies or headers
+    password = request.args.get('password')  # Or use cookies or headers
 
     if username and password:
         threading.Thread(target=ssh_connect_handler, args=(sid, username, password)).start()
