@@ -7,7 +7,7 @@ import SideMenu from "./SideMenu";
 
 function TerminalComponent() {
   const socket = useRef(null);
-  const navigate = useNavigate();  // Ensure this is defined
+  const navigate = useNavigate();
 
   useEffect(() => {
     const terminal = new Terminal({
@@ -24,18 +24,19 @@ function TerminalComponent() {
     const cols = Math.floor(window.innerWidth / 8);
     const rows = Math.floor(window.innerHeight / 18);
 
-    // Get credentials from local storage
+    // Get credentials and IP from local storage
     const username = localStorage.getItem("username");
     const password = localStorage.getItem("password");
+    const ip = localStorage.getItem("ip");
 
-    if (!username || !password) {
-      navigate("/login");  // Redirect to login if no credentials are found
+    if (!username || !password || !ip) {
+      navigate("/login");  // Redirect to login if credentials or IP is missing
       return;
     }
 
-    // Establish the WebSocket connection with credentials as query params
+    // Establish the WebSocket connection with credentials and IP as query params
     socket.current = io("http://172.18.1.231:5004", {
-      query: { username, password }
+      query: { username, password, ip }  // Pass the IP as part of the query params
     });
     socket.current.emit("resize", { cols, rows });
 
@@ -45,15 +46,13 @@ function TerminalComponent() {
 
     socket.current.on("terminal_output", (data) => {
       terminal.write(data.output);
-
-      // Check if the output contains the logout message and redirect
+      
+      // Check for logout
       if (data.output.includes("logout\r\nConnection closed.\r\n")) {
         terminal.write("\r\nSession ended. \r\n");
-
-        // Delay before redirecting to allow the user to see the logout message
         setTimeout(() => {
-          navigate("/home");  // Redirect to the home page
-        }, 3000);  
+          navigate("/home");
+        }, 3000);
       }
     });
 
