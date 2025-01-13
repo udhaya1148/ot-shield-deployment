@@ -16,7 +16,6 @@ function LoginPage() {
     try {
       const response = await axios.post("/api5/login", { username, password });
       if (response.data.success) {
-        alert("Login successful!");
 
         // Save credentials and IP in local storage
         localStorage.setItem("username", username);
