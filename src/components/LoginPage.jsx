@@ -33,31 +33,41 @@ function LoginPage() {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <form onSubmit={handleLogin} style={{ width: "300px", textAlign: "center" }}>
-        <h2>Login</h2>
-        <div>
+    <div className="flex items-center justify-center h-screen bg-gray-100">
+      <form
+        onSubmit={handleLogin}
+        className="w-full max-w-sm bg-white shadow-md rounded-lg p-8"
+      >
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Login
+        </h2>
+        <div className="mb-4">
           <input
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            style={{ marginBottom: "10px", padding: "10px", width: "100%" }}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <div>
+        <div className="mb-4">
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ marginBottom: "10px", padding: "10px", width: "100%" }}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <button type="submit" style={{ padding: "10px 20px", width: "100%" }}>Login</button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+        >
+          Login
+        </button>
+        {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
       </form>
     </div>
   );
