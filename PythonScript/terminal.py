@@ -24,6 +24,13 @@ def ssh_connect_handler(sid, username, password, target_ip, cols=80, rows=24):
         channel = ssh_client.invoke_shell(term='xterm', width=cols, height=rows)
         ssh_sessions[sid] = channel
 
+        ## Read and discard initial outputs (clear initial prompt and MOTD)
+        while channel.recv_ready():
+            channel.recv(1024)
+
+        # Clear the screen without re-triggering a prompt
+        channel.send("clear\n")
+
         while not channel.closed:
             if channel.recv_ready():
                 output = channel.recv(1024).decode("utf-8")
