@@ -79,7 +79,7 @@ function TerminalComponent() {
       <div
         id="terminal"
         ref={terminalRef}
-        className="flex flex-1 h-full overflow-auto"  // Tailwind classes for layout
+        className="flex flex-1 h-full overflow-auto"  
         style={{
           width: "calc(100% - 250px)",  // Adjust width for the sidebar
         }}
