@@ -7,6 +7,7 @@ import SideMenu from "./SideMenu";
 
 function TerminalComponent() {
   const socket = useRef(null);
+  const terminalRef = useRef(null); // Reference to the terminal div
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,29 +17,37 @@ function TerminalComponent() {
         foreground: "#FFFFFF",
       },
       cursorBlink: true,
+      scrollback: 1000,  // Set scrollback buffer size
+      lineHeight: 1.2,   // Control the line height for better readability
     });
 
-    terminal.open(document.getElementById("terminal"));
+    const terminalElement = terminalRef.current;
+    terminal.open(terminalElement);
     terminal.write("Connecting to the SSH terminal...\r\n");
 
-    const cols = Math.floor(window.innerWidth / 8);
-    const rows = Math.floor(window.innerHeight / 18);
+    const resizeTerminal = () => {
+      const cols = Math.floor(terminalElement.offsetWidth / 8);
+      const rows = Math.floor(terminalElement.offsetHeight / 18);
+      terminal.resize(cols, rows);
+      if (socket.current) {
+        socket.current.emit("resize", { cols, rows });
+      }
+    };
 
-    // Get credentials and IP from local storage
+    resizeTerminal(); // Set initial size
+
     const username = localStorage.getItem("username");
     const password = localStorage.getItem("password");
     const ip = localStorage.getItem("ip");
 
     if (!username || !password || !ip) {
-      navigate("/login");  // Redirect to login if credentials or IP is missing
+      navigate("/login");
       return;
     }
 
-    // Establish the WebSocket connection with credentials and IP as query params
-    socket.current = io("http://172.18.1.231:5004", {
-      query: { username, password, ip }  // Pass the IP as part of the query params
+    socket.current = io("http://172.18.1.240:5004", {
+      query: { username, password, ip },
     });
-    socket.current.emit("resize", { cols, rows });
 
     terminal.onData((input) => {
       socket.current.emit("terminal_input", { data: input });
@@ -46,8 +55,7 @@ function TerminalComponent() {
 
     socket.current.on("terminal_output", (data) => {
       terminal.write(data.output);
-      
-      // Check for logout
+
       if (data.output.includes("logout\r\nConnection closed.\r\n")) {
         terminal.write("\r\nSession ended. \r\n");
         setTimeout(() => {
@@ -56,26 +64,26 @@ function TerminalComponent() {
       }
     });
 
-    const handleResize = () => {
-      const newCols = Math.floor(window.innerWidth / 8);
-      const newRows = Math.floor(window.innerHeight / 18);
-      terminal.resize(newCols, newRows);
-      socket.current.emit("resize", { cols: newCols, rows: newRows });
-    };
-
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", resizeTerminal);
 
     return () => {
-      socket.current.disconnect();
+      if (socket.current) socket.current.disconnect();
       terminal.dispose();
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", resizeTerminal);
     };
   }, [navigate]);
 
   return (
     <div className="flex flex-row h-screen w-screen">
       <SideMenu />
-      <div id="terminal" style={{ height: "100vh", width: "100%" }} />
+      <div
+        id="terminal"
+        ref={terminalRef}
+        className="flex flex-1 h-full overflow-auto"  // Tailwind classes for layout
+        style={{
+          width: "calc(100% - 250px)",  // Adjust width for the sidebar
+        }}
+      />
     </div>
   );
 }
