@@ -7,7 +7,7 @@ import SideMenu from "./SideMenu";
 
 function TerminalComponent() {
   const socket = useRef(null);
-  const terminalRef = useRef(null); // Reference to the terminal div
+  const terminalRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,8 +17,8 @@ function TerminalComponent() {
         foreground: "#FFFFFF",
       },
       cursorBlink: true,
-      scrollback: 1000,  // Set scrollback buffer size
-      lineHeight: 1.2,   // Control the line height for better readability
+      scrollback: 1000,
+      lineHeight: 1.2,
     });
 
     const terminalElement = terminalRef.current;
@@ -34,7 +34,7 @@ function TerminalComponent() {
       }
     };
 
-    resizeTerminal(); // Set initial size
+    resizeTerminal();
 
     const username = localStorage.getItem("username");
     const password = localStorage.getItem("password");
@@ -45,7 +45,10 @@ function TerminalComponent() {
       return;
     }
 
-    socket.current = io("http://172.18.1.240:5004", {
+    // Dynamically get backend IP
+    const backendUrl = `${window.location.hostname}:5004`; // Adjust port as needed
+
+    socket.current = io(`http://${backendUrl}`, {
       query: { username, password, ip },
     });
 
@@ -79,9 +82,9 @@ function TerminalComponent() {
       <div
         id="terminal"
         ref={terminalRef}
-        className="flex flex-1 h-full overflow-auto"  
+        className="flex flex-1 h-full overflow-auto"
         style={{
-          width: "calc(100% - 250px)",  // Adjust width for the sidebar
+          width: "calc(100% - 250px)",
         }}
       />
     </div>
