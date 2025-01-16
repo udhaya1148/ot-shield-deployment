@@ -27,7 +27,7 @@ function LoginPage() {
         setError(response.data.message || "Invalid credentials");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError("Invalid Username or Password.");
     }
   };
 
@@ -66,7 +66,7 @@ function LoginPage() {
         >
           Login
         </button>
-        {error && <p className="text-red-500 text-sm mt-4">Invalid Username or Password</p>}
+        {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
       </form>
     </div>
   );
