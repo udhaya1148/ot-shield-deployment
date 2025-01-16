@@ -66,7 +66,7 @@ function LoginPage() {
         >
           Login
         </button>
-        {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
+        {error && <p className="text-red-500 text-sm mt-4">Invalid Username or Password</p>}
       </form>
     </div>
   );
