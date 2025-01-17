@@ -13,6 +13,19 @@ function RoutesTable() {
   };
 
   useEffect(() => {
+    // Disable scrolling when the component is mounted
+    document.body.style.overflowX = "hidden";
+    document.body.style.overflowY = "auto";
+
+    // Enable scrolling when the component is unmounted
+    return () => {
+      document.body.style.overflowX = "auto";
+      document.body.style.overflowY = "auto";
+
+    };
+  }, []);
+
+  useEffect(() => {
     fetchNetworkInfo();
     const interval = setInterval(fetchNetworkInfo, 5000);
     return () => clearInterval(interval);
@@ -25,8 +38,8 @@ function RoutesTable() {
   return (
     <div className="flex flex-row h-screen w-screen">
       <SideMenu />
-      <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
-        <div className="border border-black mb-2 p-6 bg-white rounded-lg shadow-lg">
+      <div className="flex-grow p-5 overflow-auto mt-4 justify-center">
+        <div className="border border-black mb-2 p-3 bg-white rounded-lg shadow-lg">
          
             <div>
               <h3 className="text-2xl text-green-600 font-bold mt-6">
