@@ -10,6 +10,18 @@ const AddStaticArp = () => {
   const [interfaces, setInterfaces] = useState([]);
   const [ipError, setIpError] = useState("");
 
+  useEffect(() => {
+    // Disable scrolling when the component is mounted
+    document.body.style.overflowX = "hidden";
+    document.body.style.overflowY = "auto";
+    
+    // Enable scrolling when the component is unmounted
+    return() => {
+      document.body.style.overflowX = "auto"
+      document.body.style.overflowY = "auto"
+    }
+  })
+
   const fetchArpData = async () => {
     try {
       const response = await fetch("/api2/arp");
