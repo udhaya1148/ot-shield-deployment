@@ -38,6 +38,7 @@ sudo apt install iptables-persistent
   ```
  ## password : 
   ```
+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
   ```
   ## Install dependencies
   ```
