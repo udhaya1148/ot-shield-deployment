@@ -19,6 +19,17 @@ function NetworkConfiguration() {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
   useEffect(() => {
+    // Disable scrolling when the component is mounted
+    document.body.style.overflow = "hidden";
+
+    // Enable scrolling when the component is unmounted
+    return () => {
+      document.body.style.overflow = "auto";
+
+    };
+  }, []);
+
+  useEffect(() => {
     fetchNetworkInfo();
     const interval = setInterval(fetchNetworkInfo, 5000);
     return () => clearInterval(interval);
