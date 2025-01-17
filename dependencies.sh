@@ -4,8 +4,8 @@
 USERNAME=$(whoami)
 
 # Define source and destination directories for OT-Shield
-SOURCE_DIR="/home/$USERNAME/ot-shield-testing"
-DEST_DIR="/usr/bin/ot-shield-testing"
+SOURCE_DIR="/home/$USERNAME/Chiefnet-OT-Shield"
+DEST_DIR="/usr/bin/Chiefnet-OT-Shield"
 
 # Function to move a directory
 move_directory() {
@@ -40,6 +40,8 @@ sudo apt install -y gunicorn || { echo "Failed to install Gunicorn"; exit 1; }
 # Install Python dependencies for Flask
 sudo apt install -y python3-flask-cors python3-psutil || { echo "Failed to install Flask dependencies"; exit 1; }
 
+sudo apt install python3-pamela
+
 # Install Node.js and npm
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt install -y nodejs || { echo "Failed to install Node.js and npm"; exit 1; }
@@ -62,6 +64,10 @@ else
     exit 1
 fi
 
+# Install Python pip and keyboard module
+#sudo apt install -y python3-pip || { echo "Failed to install python3-pip"; exit 1; }
+#sudo pip3 install keyboard || { echo "Failed to install Python keyboard module"; exit 1; }
+
 # Install Python pip and virtual environment
 sudo apt install -y python3-pip python3-venv || { echo "Failed to install python3-pip and python3-venv"; exit 1; }
 
@@ -78,9 +84,5 @@ pip install keyboard || { echo "Failed to install Python keyboard module"; exit 
 # Deactivate the virtual environment
 deactivate
 
-# Install required dependencies in the virtual environment
-echo "Activating virtual environment and installing dependencies..."
-source "/usr/bin/ot-shield-testing/PythonScript/myenv/bin/activate"
-pip install flask flask-socketio gunicorn eventlet
 
 echo "Setup complete!"
