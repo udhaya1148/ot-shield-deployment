@@ -43,7 +43,7 @@ function TerminalComponent() {
       return;
     }
 
-    const backendUrl = `${window.location.hostname}:5004`;
+    const backendUrl = `${window.location.hostname}:5054`;
 
     socket.current = io(`http://${backendUrl}`, {
       query: { username, password, ip },
