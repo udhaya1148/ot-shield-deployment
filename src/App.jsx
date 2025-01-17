@@ -10,7 +10,7 @@ import LoginPage from "./components/LoginPage";
 import { IoMdLogOut } from "react-icons/io";
 
 function Header() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     navigate("/");
@@ -27,15 +27,15 @@ function Header() {
         OT Shield
       </div>
 
-      {location.pathname !=="/" && (
+      {location.pathname !== "/" && (
         <button
-        onClick={handleLogout}
-        className="bg-red-500 text-white rounded-md hover:bg-red-600 mr-4"
-      >
-        <IoMdLogOut />
-      </button>
+          onClick={handleLogout}
+          className="bg-red-500 text-white rounded-md hover:bg-red-600 p-2 mr-4 p-2"
+          title="Logout"
+        >
+          <IoMdLogOut size={20} />
+        </button>
       )}
-      
     </h1>
   );
 }
@@ -49,7 +49,10 @@ function App() {
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/home" element={<MainDashboard />} />
-            <Route path="/network-configuration" element={<NetworkConfiguration />} />
+            <Route
+              path="/network-configuration"
+              element={<NetworkConfiguration />}
+            />
             <Route path="/arp" element={<ArpTable />} />
             <Route path="/add-arp" element={<AddStaticArp />} />
             <Route path="/delete-arp" element={<DeleteArp />} />
