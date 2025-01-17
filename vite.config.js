@@ -7,25 +7,29 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api1': {
-        target: 'http://localhost:5001', // Flask server URL
+        target: 'http://localhost:5051', // Flask server URL
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api1/, '')
-
+        rewrite: (path) => path.replace(/^\/api1/, ''),
       },
       '/api2': {
-        target: 'http://localhost:5002', // Flask server URL
+        target: 'http://localhost:5052', // Flask server URL
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api2/, '')
+        rewrite: (path) => path.replace(/^\/api2/, ''),
       },
       '/api3': {
-        target: 'http://localhost:5003', // Flask server URL
+        target: 'http://localhost:5053', // Flask server URL
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api3/, '')
+        rewrite: (path) => path.replace(/^\/api3/, ''),
+      },
+      '/api5': {
+        target: 'http://localhost:5055', 
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api5/, '')
       },
     },
   },
   preview: {
-    port: 5000,
+    port: 5050,
     host: true,
   },
 });
