@@ -17,7 +17,6 @@ function LoginPage() {
     return () => {
       document.body.style.overflowX = "auto";
       document.body.style.overflowY = "auto";
-
     };
   }, []);
 
@@ -27,9 +26,8 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api5/login", { username, password });
+      const response = await axios.post("/api5/login", { username, password }, { timeout: 5000 }); // 5 seconds timeout
       if (response.data.success) {
-
         // Save credentials and IP in local storage
         localStorage.setItem("username", username);
         localStorage.setItem("password", password);
@@ -41,6 +39,7 @@ function LoginPage() {
       }
     } catch (err) {
       setError("Invalid Username or Password.");
+      console.error(err); // Log to get more details on the error
     }
   };
 
