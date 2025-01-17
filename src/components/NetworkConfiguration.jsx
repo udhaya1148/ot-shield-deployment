@@ -20,11 +20,13 @@ function NetworkConfiguration() {
 
   useEffect(() => {
     // Disable scrolling when the component is mounted
-    document.body.style.overflow = "hidden";
+    document.body.style.overflowX = "hidden";
+    document.body.style.overflowY = "auto";
 
     // Enable scrolling when the component is unmounted
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflowX = "auto";
+      document.body.style.overflowY = "auto";
 
     };
   }, []);
