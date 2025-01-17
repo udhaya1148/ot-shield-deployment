@@ -8,7 +8,7 @@ const ArpTable = () => {
   useEffect(() => {
     // Disable scrolling when the component is mounted
     document.body.style.overflowX = "hidden";
-    document.body.style.overflowY = "hidden";
+    document.body.style.overflowY = "auto";
 
     // Enable scrolling when the component is unmounted
     return () => {
