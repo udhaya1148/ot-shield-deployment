@@ -11,42 +11,38 @@ function TerminalComponent() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Disable scrolling for the body
+    document.body.style.overflow = "hidden";
+
+    const terminalElement = terminalRef.current;
+
+    // Calculate dynamic line height based on display size
+    const displayHeight = window.innerHeight;
+    const lineHeight = displayHeight <= 600 ? 1.2 : displayHeight <= 900 ? 1.4 : 1.6;
+
     const terminal = new Terminal({
       theme: {
-        background: "#000000",
+        background: "#000000", // Background for the terminal
         foreground: "#FFFFFF",
       },
       cursorBlink: true,
       scrollback: 1000,
-      lineHeight: 1.2,
+      lineHeight: lineHeight, // Dynamically adjust line height
     });
 
-    const terminalElement = terminalRef.current;
     terminal.open(terminalElement);
     terminal.write("Connecting to the SSH terminal...\r\n");
-
-    const resizeTerminal = () => {
-      const cols = Math.floor(terminalElement.offsetWidth / 8);
-      const rows = Math.floor(terminalElement.offsetHeight / 18);
-      terminal.resize(cols, rows);
-      if (socket.current) {
-        socket.current.emit("resize", { cols, rows });
-      }
-    };
-
-    resizeTerminal();
 
     const username = localStorage.getItem("username");
     const password = localStorage.getItem("password");
     const ip = localStorage.getItem("ip");
 
     if (!username || !password || !ip) {
-      navigate("/login");
+      navigate("/");
       return;
     }
 
-    // Dynamically get backend IP
-    const backendUrl = `${window.location.hostname}:5004`; // Adjust port as needed
+    const backendUrl = `${window.location.hostname}:5004`;
 
     socket.current = io(`http://${backendUrl}`, {
       query: { username, password, ip },
@@ -67,24 +63,25 @@ function TerminalComponent() {
       }
     });
 
-    window.addEventListener("resize", resizeTerminal);
-
     return () => {
       if (socket.current) socket.current.disconnect();
       terminal.dispose();
-      window.removeEventListener("resize", resizeTerminal);
+
+      // Re-enable scrolling for the body when the component unmounts
+      document.body.style.overflow = "auto";
     };
   }, [navigate]);
 
   return (
-    <div className="flex flex-row h-screen w-screen">
+    <div className="flex h-screen overflow-hidden">
       <SideMenu />
       <div
         id="terminal"
         ref={terminalRef}
-        className="flex flex-1 h-full overflow-auto"
+        className="flex-1 relative mt-3 mr-3 ml-3"
         style={{
-          width: "calc(100% - 250px)",
+          backgroundColor: "#000",
+          maxHeight: "70vh", // Restricts terminal height to viewport
         }}
       />
     </div>
