@@ -3,6 +3,7 @@ from flask_cors import CORS
 import pamela
 import os
 import subprocess
+import time
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -13,10 +14,15 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
+    start_time = time.time()
     try:
         pamela.authenticate(username, password)
+        elapsed_time = time.time() - start_time
+        print(f"Authentication took {elapsed_time} seconds")
         return jsonify({"success": True})
     except pamela.PAMError as e:
+        elapsed_time = time.time() - start_time
+        print(f"Authentication failed after {elapsed_time} seconds")
         return jsonify({"success": False, "message": str(e)}), 401
 
 if __name__ == "__main__":
@@ -28,5 +34,6 @@ if __name__ == "__main__":
         'gunicorn',
         '-w', '1',          # Number of worker processes
         '-b', '0.0.0.0:5055', # Bind to 0.0.0.0:5005
+        '--timeout', '30',    # Set timeout (seconds)
         app_module           # Pass the module name dynamically
     ])
