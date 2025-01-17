@@ -5,6 +5,19 @@ const ArpTable = () => {
   const [arpData, setArpData] = useState([]);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    // Disable scrolling when the component is mounted
+    document.body.style.overflowX = "hidden";
+    document.body.style.overflowY = "hidden";
+
+    // Enable scrolling when the component is unmounted
+    return () => {
+      document.body.style.overflowX = "auto";
+      document.body.style.overflowY = "auto";
+
+    };
+  }, []);
+
   // Function to fetch ARP data
   const fetchArpData = async () => {
     try {
