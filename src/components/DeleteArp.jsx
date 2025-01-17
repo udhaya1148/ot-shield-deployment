@@ -9,6 +9,18 @@ const DeleteArp = () => {
   const [ip, setIp] = useState("");
   const [ipError, setIpError] = useState(""); // Track IP error state
 
+  useEffect(() => {
+    // Disable scrolling when the component is mounted
+    document.body.style.overflowX = "hidden";
+    document.body.style.overflowY = "auto";
+
+    // Enable scrolling when the component is unmounted
+    return () => {
+      document.body.style.overflowX = "auto";
+      document.body.style.overflowY = "auto";
+
+    };
+  }, []);
   
   // Function to fetch ARP data
   const fetchArpData = async () => {
