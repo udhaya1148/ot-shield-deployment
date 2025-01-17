@@ -197,7 +197,7 @@ if __name__ == '__main__':
 
     # Run gunicorn programmatically using subprocess
     try:
-        subprocess.run(['gunicorn', '-w', '4', '-b', '0.0.0.0:5002', current_file[:-3] + ':app'], check=True)
+        subprocess.run(['gunicorn', '-w', '1', '-b', '0.0.0.0:5052', current_file[:-3] + ':app'], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Failed to start gunicorn: {e}")
         sys.exit(1)
