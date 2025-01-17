@@ -27,6 +27,6 @@ if __name__ == "__main__":
     subprocess.run([
         'gunicorn',
         '-w', '1',          # Number of worker processes
-        '-b', '0.0.0.0:5005', # Bind to 0.0.0.0:5005
+        '-b', '0.0.0.0:5055', # Bind to 0.0.0.0:5005
         app_module           # Pass the module name dynamically
     ])
