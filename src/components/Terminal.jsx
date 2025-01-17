@@ -42,7 +42,7 @@ function TerminalComponent() {
       return;
     }
 
-    const backendUrl = `${window.location.hostname}:5004`;
+    const backendUrl = `${window.location.hostname}:5054`;
 
     socket.current = io(`http://${backendUrl}`, {
       query: { username, password, ip },
@@ -78,7 +78,7 @@ function TerminalComponent() {
       <div
         id="terminal"
         ref={terminalRef}
-        className="flex-1 relative mt-3 mr-3 ml-3"
+        className="flex-1 relative mt-3  ml-3 mr-3"
         style={{
           backgroundColor: "#000",
           maxHeight: "70vh", // Restricts terminal height to viewport
