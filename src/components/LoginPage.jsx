@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -7,6 +7,19 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Disable scrolling when the component is mounted
+    document.body.style.overflowX = "hidden";
+    document.body.style.overflowY = "hidden";
+
+    // Enable scrolling when the component is unmounted
+    return () => {
+      document.body.style.overflowX = "auto";
+      document.body.style.overflowY = "auto";
+
+    };
+  }, []);
 
   // Extract IP address from URL
   const ip = window.location.hostname;  // Get IP address from the current URL
