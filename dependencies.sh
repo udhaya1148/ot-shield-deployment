@@ -55,6 +55,10 @@ if [ -d "$BASE_PATH" ]; then
     sudo npm install -g npm@latest || { echo "Failed to install npm"; exit 1; }
     npm install react-router-dom || { echo "Failed to install react-router-dom"; exit 1; }
     npm install react-icons --save || { echo "Failed to install react-icons"; exit 1; }
+    npm install axios
+    npm install xterm
+    npm install socket.io-client
+    npm install xterm-css
 
     # Install TailwindCSS
     npm install -D tailwindcss postcss autoprefixer || { echo "Failed to install TailwindCSS"; exit 1; }
