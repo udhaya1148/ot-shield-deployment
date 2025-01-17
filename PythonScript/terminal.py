@@ -97,6 +97,6 @@ if __name__ == "__main__":
         'gunicorn',
         '-w', '1',  # Number of worker processes
         '-k', 'eventlet',  # Use eventlet worker
-        '-b', '0.0.0.0:5004',  # Bind to 0.0.0.0:5004
+        '-b', '0.0.0.0:5054',  # Bind to 0.0.0.0:5004
         app_module  # Pass the module name dynamically
     ])
