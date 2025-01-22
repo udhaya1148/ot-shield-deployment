@@ -191,6 +191,28 @@ def is_valid_ip(ip):
     except socket.error:
         return False
 
+# validate gateway and route
+def validate_route(route, gateway):
+    """
+    Validate a given route by checking if the gateway is reachable and the route is valid.
+    """
+    try:
+        # Validate the gateway
+        if gateway:
+            result = subprocess.run(['ping', '-c', '1', gateway], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if result.returncode != 0:
+                return False, f"Gateway {gateway} is unreachable."
+
+        # Check if the route already exists
+        result = subprocess.run(['ip', 'route'], stdout=subprocess.PIPE, text=True)
+        existing_routes = result.stdout.strip().split('\n')
+        if any(route in existing_route for existing_route in existing_routes):
+            return False, f"Route {route} already exists."
+
+        return True, ""
+    except Exception as e:
+        return False, str(e)
+
 @app.route('/update-network', methods=['POST'])
 def update_network():
     """
@@ -229,6 +251,13 @@ def update_network():
         else:
             valid_dns = []
             invalid_dns = []
+
+        # Validate routes
+        if routes:
+            for route in routes:
+                is_valid, message = validate_route(route, gateway)
+                if not is_valid:
+                    return jsonify({'status': 'error', 'message': f"Invalid route: {message}"}), 400
 
         # Skip route validation if gateway is not provided
         if gateway and not routes:
@@ -406,4 +435,4 @@ if __name__ == "__main__":
         '-w', '1',          # Number of worker processes
         '-b', '0.0.0.0:5051', # Bind to 0.0.0.0:5051
         app_module           # Pass the module name dynamically
-    ])
+    ]) 
