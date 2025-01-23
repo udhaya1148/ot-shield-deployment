@@ -191,20 +191,24 @@ def is_valid_ip(ip):
     except socket.error:
         return False
 
+@app.route('/update-network', methods=['POST'])
 def update_network():
     """
     Updates the network configuration for a given interface based on the provided
-    JSON payload. Handles both DHCP and static IP configurations with routes.
+    JSON payload.
     """
     data = request.json
     interface = data.get('interface')
     ip = data.get('ip')
     subnet = data.get('subnet')
     gateway = data.get('gateway', None)
-    dns_servers = data.get('dns', [])
+    dns_servers = data.get('dns', None)
     dhcp_enabled = data.get('dhcp', None)
     routes = data.get('routes', [])
-    metric = data.get('metric', 100)  # Default metric
+    metric = data.get('metric', None)
+
+    if not metric:
+        metric = 100  # Set default metric if not provided
 
     try:
         # Validation
@@ -216,16 +220,21 @@ def update_network():
             if not is_valid_ip(ip):
                 return jsonify({'status': 'error', 'message': 'Invalid IP address.'}), 400
 
-        # Validate DNS servers
-        valid_dns = [dns for dns in dns_servers if is_valid_ip(dns)]
-        invalid_dns = [dns for dns in dns_servers if dns not in valid_dns]
+        # Handle validation for optional fields like gateway, DNS, and routes
+        if gateway and not is_valid_ip(gateway):
+            gateway = None  # Ignore invalid gateway if provided
+        if dns_servers:
+            valid_dns = [dns for dns in dns_servers if is_valid_ip(dns)]
+            invalid_dns = [dns for dns in dns_servers if dns not in valid_dns]
+        else:
+            valid_dns = []
+            invalid_dns = []
 
-        # Validate routes
-        for route in routes:
-            if not all(key in route for key in ('to', 'via', 'metric')):
-                return jsonify({'status': 'error', 'message': 'Each route must include "to", "via", and "metric".'}), 400
+        # Skip route validation if gateway is not provided
+        if gateway and not routes:
+            return jsonify({'status': 'error', 'message': 'Routes are required when providing a gateway.'}), 400
 
-        # Load Netplan configuration
+        # Proceed with valid inputs only
         netplan_files = glob.glob('/etc/netplan/*.yaml')
         if not netplan_files:
             return jsonify({'status': 'error', 'message': 'No Netplan configuration files found.'}), 400
@@ -239,8 +248,9 @@ def update_network():
         interface_config = config['network']['ethernets'].setdefault(interface, {})
 
         if dhcp_enabled:
-            # Enable DHCP
+            # Enable DHCP and clear static configurations
             interface_config['dhcp4'] = True
+            interface_config['dhcp6'] = True
             interface_config.pop('addresses', None)
             interface_config.pop('nameservers', None)
             interface_config.pop('routes', None)
@@ -254,46 +264,43 @@ def update_network():
                 cidr = subnet
             else:
                 return jsonify({'status': 'error', 'message': 'Invalid subnet format.'}), 400
-            
-            # Configure static IP
+
+            # Update static IP configuration
             interface_config['dhcp4'] = False
             interface_config['dhcp6'] = False
             interface_config['addresses'] = [f"{ip}/{cidr}"]
 
-            # Configure DNS
+            # Handle DNS configuration
             if valid_dns:
                 interface_config['nameservers'] = {'addresses': valid_dns}
             else:
                 interface_config.pop('nameservers', None)
 
-            # Configure Routes
+            # Handle Gateway configuration (optional)
             if routes:
-                interface_config['routes'] = [
-                    {'to': route['to'], 'via': route['via'], 'metric': route['metric']} for route in routes
-                ]
-            elif gateway:
-                # Add default route when only gateway is provided
-                interface_config['routes'] = [{'to': '0.0.0.0/0', 'via': gateway}]
+                interface_config['routes'] = [{'to': route, 'via': gateway, 'metric': metric} for route in routes]
             else:
-                interface_config.pop('routes', None)
+                if gateway:  # If a gateway is provided but no routes, add default route
+                    interface_config['routes'] = [{'to': 'default', 'via': gateway, 'metric': metric}]
+                else:
+                    interface_config.pop('routes', None)
 
         # Write back the updated configuration
         with open(netplan_config_path, 'w') as f:
-            yaml.dump(config, f, default_flow_style=False, sort_keys=False)
+            yaml.dump(config, f)
 
-        # Apply the Netplan configuration
+        # Apply the changes using Netplan
         subprocess.run(['sudo', 'netplan', 'apply'], check=True)
 
-        # Bring up the interface if down
+        # Bring up the interface if it's down
         subprocess.run(['sudo', 'ip', 'link', 'set', interface, 'up'], check=False)
 
-        # Success message
+        # Generate success message
         messages = ['Network configuration updated successfully.']
         if invalid_dns:
             messages.append(f"Invalid DNS server(s) ignored: {', '.join(invalid_dns)}.")
 
         return jsonify({'status': 'success', 'message': ' '.join(messages)})
-
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
@@ -397,6 +404,6 @@ if __name__ == "__main__":
     subprocess.run([
         'gunicorn',
         '-w', '1',          # Number of worker processes
-        '-b', '0.0.0.0:5051', # Bind to 0.0.0.0:5051
+        '-b', '0.0.0.0:5051', # Bind to 0.0.0.0:5001
         app_module           # Pass the module name dynamically
     ])
