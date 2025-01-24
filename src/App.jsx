@@ -8,6 +8,9 @@ import RoutesTable from "./components/RoutesTable";
 import Terminal from "./components/Terminal";
 import LoginPage from "./components/LoginPage";
 import { IoMdLogOut } from "react-icons/io";
+import IPAddress from "./components/IPAddress";
+import Routing from "./components/Routing";
+import Gateways from "./components/Gateways";
 
 function Header() {
   const navigate = useNavigate();
@@ -48,10 +51,19 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<LoginPage />} />
-            <Route path="/home" element={<MainDashboard />} />
+            <Route path="/home" element={<MainDashboard />} /> 
+            <Route path="/network-configuration" element={<NetworkConfiguration />} />
             <Route
-              path="/network-configuration"
-              element={<NetworkConfiguration />}
+              path="/ip-address"
+              element={<IPAddress />}
+            />
+            <Route
+              path="/gateway"
+              element={<Gateways />}
+            />
+            <Route
+              path="/routing"
+              element={<Routing />}
             />
             <Route path="/arp" element={<ArpTable />} />
             <Route path="/add-arp" element={<AddStaticArp />} />
