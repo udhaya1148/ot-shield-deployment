@@ -23,74 +23,65 @@ function SideMenu({ children }) {
       name: "Settings",
       icon: MdOutlineSettings,
       subItems: [
-        { name: "Network Configuration", link: "/network-configuration" },
-        { name: "Add Static ARP", link:"/add-arp" },
-        { name: "Delete ARP", link:"/delete-arp" },
+        {name: "Network Configuration", link: "/network-configuration"},
+        { name: "Add Static ARP", link: "/add-arp" },
+        { name: "Delete ARP", link: "/delete-arp" },
       ],
     },
-    { name: "Terminal", icon: IoTerminal, link: "/terminal" }
+    { name: "Terminal", icon: IoTerminal, link: "/terminal" },
   ];
-
-  const handleMenuClick = (menuIndex) => {
-    if (!open) {
-      toggleMenu();
-    }
-    if (menus[menuIndex].subItems) {
-      setActiveMenus((prev) =>
-        prev.includes(menuIndex) ? prev.filter((index) => index !== menuIndex) : [...prev, menuIndex]
-      );
-    }
-  };
 
   const toggleMenu = () => {
     setOpen((prev) => {
-      if (prev) {
-        setActiveMenus([]);
-      }
+      if (prev) setActiveMenus([]); // Close all submenus when collapsing
       return !prev;
+    });
+  };
+
+  const handleMenuClick = (menuId) => {
+    if (!open) {
+      toggleMenu();
+    }
+    setActiveMenus((prev) =>
+      prev.includes(menuId) ? prev.filter((id) => id !== menuId) : [...prev, menuId]
+    );
+  };
+
+  const renderMenuItems = (menuItems, parentId = "", level = 0) => {
+    return menuItems.map((menu, index) => {
+      const menuId = parentId ? `${parentId}-${index}` : `${index}`;
+      return (
+        <div key={menuId}>
+          <Link to={menu.link || "#"} onClick={() => menu.subItems && handleMenuClick(menuId)}>
+            <div
+              className="group flex items-center gap-3.5 font-bold p-2 pl-2 hover:bg-gray-400 rounded-md cursor-pointer "
+              //   ${
+              //   level > 0 ? `pl-${level * 4} ml-${level * 4}` : "" // Add padding-left and margin-left based on the nesting level
+              // }`}
+            >
+              {React.createElement(menu.icon || "div", { size: "20" })}
+              <h2 className={`${!open && "hidden"} whitespace-pre`}>{menu.name}</h2>
+            </div>
+          </Link>
+          {activeMenus.includes(menuId) &&
+            open &&
+            menu.subItems &&
+            renderMenuItems(menu.subItems, menuId, level + 1)}
+        </div>
+      );
     });
   };
 
   return (
     <div className={`${open ? "w-55" : "w-20"} duration-300 h-screen bg-gray-300 p-5`}>
       <div className="py-2 flex justify-end">
-        <BsFillArrowLeftCircleFill size={30} className={`cursor-pointer ${!open && 'rotate-180'}`} onClick={toggleMenu} />
+        <BsFillArrowLeftCircleFill
+          size={30}
+          className={`cursor-pointer ${!open && "rotate-180"}`}
+          onClick={toggleMenu}
+        />
       </div>
-      <div className="mt-4 flex flex-col gap-2">
-        {menus.map((menu, i) => (
-          <div key={i}>
-            <Link to={menu.link || "#"} onClick={() => handleMenuClick(i)}>
-              <div
-                className="group flex items-center gap-3.5 font-bold p-2 hover:bg-gray-400 rounded-md cursor-pointer"
-              >
-                <div>{React.createElement(menu.icon, { size: "20" })}</div>
-                <h2 className={`whitespace-pre duration-500 ${!open && "opacity-0"}`}>{menu.name}</h2>
-                <h2
-                  className={`${
-                    open && "hidden"
-                  } absolute left-48 bg-gray-600 font-semibold whitespace-pre text-white
-                  rounded-md drop-shadow-lg px-0 w-0 overflow-hidden group-hover:px-2
-                  group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit`}
-                >
-                  {menu.name}
-                </h2>
-              </div>
-            </Link>
-            {activeMenus.includes(i) &&
-              open &&
-              menu.subItems &&
-              menu.subItems.map((subItem, idx) => (
-                <Link
-                  key={idx}
-                  to={subItem.link}
-                  className="flex items-center gap-3.5 pl-12 font-bold p-2 hover:bg-gray-400 rounded-md"
-                >
-                  {subItem.name}
-                </Link>
-              ))}
-          </div>
-        ))}
-      </div>
+      <div className="mt-4 flex flex-col gap-2">{renderMenuItems(menus)}</div>
     </div>
   );
 }
