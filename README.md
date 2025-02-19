@@ -64,6 +64,9 @@ cd /usr/bin/Chiefnet-OT-Shield
   ```
   sudo chmod +x start-service.sh
   ```
+```
+sudo apt install python3.12-venv
+```
   ```
  sudo ./start-service.sh
   ```
