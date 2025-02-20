@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import Modal from "./Modal"; 
+import Modal from "./Modal";
 import { FaEdit, FaTimes } from "react-icons/fa";
 
 function Routing() {
   const [networkInfo, setNetworkInfo] = useState({});
   const [selectedInterface, setSelectedInterface] = useState("");
-  const [editedInterfaceName, setEditedInterfaceName] = useState(""); 
+  const [editedInterfaceName, setEditedInterfaceName] = useState("");
   const [ip, setIp] = useState("");
   const [subnet, setSubnet] = useState("");
   const [gateway, setGateway] = useState("");
@@ -17,8 +17,9 @@ function Routing() {
   const [routeVia, setRouteVia] = useState("");
   const [isValidRoute, setIsValidRoute] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViaValid, setIsViaValid] = useState(true);
+  const [deleteRoutes, setDeleteRoutes] = useState("");
 
   useEffect(() => {
     // Disable scrolling when the component is mounted
@@ -47,18 +48,20 @@ function Routing() {
       .catch((error) => console.error("Error fetching network info:", error));
   };
   // validation for Routes entry
-  const routePattern = /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})(,\s*\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})*$/;
-  const handleRoute = (e) =>{
+  const routePattern =
+    /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})(,\s*\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})*$/;
+  const handleRoute = (e) => {
     const value = e.target.value;
     setRouteTo(value);
 
     //check if the input value matches the route pattern
     const isValid = routePattern.test(value);
-    setIsValidRoute(isValid)
-  }
+    setIsValidRoute(isValid);
+  };
 
   // validation for to entry
-  const ipPattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  const ipPattern =
+    /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
   const handleViaChange = (e) => {
     const value = e.target.value;
     setRouteVia(value);
@@ -77,36 +80,41 @@ function Routing() {
       alert("IP Address and Subnet are mandatory fields!");
       return;
     }
-  
+
     if (dhcpEnabled === "Manual" && ip && !ipPattern.test(ip)) {
       alert("Invalid IP Address format! Please enter a valid IP address.");
       return;
     }
-  
+
     if (routeTo && !routePattern.test(routeTo)) {
-      alert("Invalid routes format! Ensure each route follows the 'ip/subnet'.");
+      alert(
+        "Invalid routes format! Ensure each route follows the 'ip/subnet'."
+      );
       return;
     }
-  
+
     if ((routeVia && !routeTo) || (routeTo && !routeVia)) {
       alert("Both 'to' and 'via' must be provided together!");
       return;
     }
-  
+
     // Get existing routes
     const existingRoutes = networkInfo[selectedInterface]?.Routes || [];
-  
+
     // Identify routes to remove
-    const removeRoutes = existingRoutes.filter(route => 
-      route.to !== "default" // Remove everything except default
+    const removeRoutes = existingRoutes.filter(
+      (route) => route.to !== "default" // Remove everything except default
     );
-  
+
     // Only add new routes if user provides input
-    const addedRoutes = routeTo && routeVia ? [{ metric: routeMetric, to: routeTo, via: routeVia }] : [];
-  
+    const addedRoutes =
+      routeTo && routeVia
+        ? [{ metric: routeMetric, to: routeTo, via: routeVia }]
+        : [];
+
     // If user provides no route input, force clear existing routes
     const finalRoutes = addedRoutes.length > 0 ? addedRoutes : [];
-  
+
     const payload = {
       interface: selectedInterface,
       new_interface_name: editedInterfaceName || selectedInterface,
@@ -115,10 +123,10 @@ function Routing() {
       gateway: gateway || null,
       dns: dns ? dns.split(",").map((d) => d.trim()) : [],
       dhcp: dhcpEnabled === "DHCP",
-      routes: finalRoutes,  // Ensure this overwrites old routes
+      routes: finalRoutes, // Ensure this overwrites old routes
       remove_routes: removeRoutes,
     };
-  
+
     fetch("/api1/update-network", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -131,16 +139,13 @@ function Routing() {
           fetchNetworkInfo();
           setIsModalOpen(false);
           setSelectedInterface("");
-//          window.location.reload();
+          //          window.location.reload();
         } else {
           alert(`Error updating network: ${data.message}`);
         }
       })
       .catch((error) => console.error("Error updating network:", error));
   };
-  
-  
-
 
   // Function to check if an interface is editable (blocking enp6s0f0 and similar names)
   const isEditable = (iface) => {
@@ -184,6 +189,13 @@ function Routing() {
       );
     }
     setIsModalOpen(true); // Open the modal
+  };
+
+  const RemoveRoutesInput = () => {
+    setRouteMetric("");
+    setRouteTo("");
+    setRouteVia("");
+    setDeleteRoutes("");
   };
 
   return (
@@ -305,13 +317,13 @@ function Routing() {
                   placeholder="Enter routes in ip/subnet format, e.g., 192.168.1.0/24"
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
-                {
-                !isValidRoute && (
-                  <span className="text-red-500 text-md ml-2">Invalid route format</span>
-                )
-              }
+                {!isValidRoute && (
+                  <span className="text-red-500 text-md ml-2">
+                    Invalid route format
+                  </span>
+                )}
               </div>
-              
+
               <div className="flex items-center mb-4">
                 <label className="w-1/3 text-left font-bold flex items-center justify-between">
                   <span>via</span>
@@ -325,17 +337,30 @@ function Routing() {
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
                 {!isViaValid && (
-                    <span className="text-red-500 text-md ml-2">Invalid via Address</span>
-                  )}
+                  <span className="text-red-500 text-md ml-2">
+                    Invalid via Address
+                  </span>
+                )}
               </div>
             </>
           )}
-          <button
-            onClick={handleUpdate}
-            className="bg-blue-600 text-white p-2 rounded-md mt-4"
-          >
-            Update
-          </button>
+          <div className="mt-4">
+            <button
+              onClick={RemoveRoutesInput}
+              className="bg-red-500 text-white p-2 rounded-md w-full"
+              title="Route deleted successfully. Please click 'Save Changes' to apply the update."
+            >
+              Delete Routes
+            </button>
+          </div>
+          <div className="mt-4">
+            <button
+              onClick={handleUpdate}
+              className="bg-blue-600 text-white p-2 rounded-md w-full"
+            >
+              Save Changes
+            </button>
+          </div>
         </div>
       </Modal>
     </div>
