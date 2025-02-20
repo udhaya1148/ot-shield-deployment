@@ -53,9 +53,13 @@ if [ -d "$BASE_PATH" ]; then
 
     # Install React and dependencies
     sudo npm install -g npm@latest || { echo "Failed to install npm"; exit 1; }
+    echo "react-router-dom-install"
     npm install react-router-dom || { echo "Failed to install react-router-dom"; exit 1; }
+    echo "react icons install"
     npm install react-icons --save || { echo "Failed to install react-icons"; exit 1; }
+    echo "axios install"
     npm install axios
+    echo "xterm install"
     npm install @xterm/xterm
     npm install socket.io-client
 #    npm install xterm-css
@@ -63,6 +67,7 @@ if [ -d "$BASE_PATH" ]; then
     # Install TailwindCSS
     # Install TailwindCSS
 #npm install -D tailwindcss postcss autoprefixer || { echo "Failed to install TailwindCSS"; exit 1; }
+echo "tailwind css install"
 npm install tailwindcss @tailwindcss/vite || { echo "Failed to install TailwindCSS"; exit 1; }
 
 # Verify Tailwind installation before running init
