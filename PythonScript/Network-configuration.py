@@ -275,7 +275,7 @@ def update_network():
         if not dhcp_enabled and (not ip or not subnet):
             return jsonify({'status': 'error', 'message': 'IP address and subnet are required when DHCP is disabled.'}), 400
         if gateway and not is_valid_gateway(interface, ip, subnet, gateway):
-            return jsonify({'status': 'error', 'message': 'Nexthop has invalid gateway.'}), 400
+            return jsonify({'status': 'error', 'message': 'Invalid or unreachable gateway.'}), 400
 
         # Fetch existing routes from all interfaces
         existing_routes = get_existing_routes()
