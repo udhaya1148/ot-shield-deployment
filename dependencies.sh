@@ -62,15 +62,16 @@ if [ -d "$BASE_PATH" ]; then
 
     # Install TailwindCSS
     # Install TailwindCSS
-npm install -D tailwindcss postcss autoprefixer || { echo "Failed to install TailwindCSS"; exit 1; }
+#npm install -D tailwindcss postcss autoprefixer || { echo "Failed to install TailwindCSS"; exit 1; }
+npm install tailwindcss @tailwindcss/vite || { echo "Failed to install TailwindCSS"; exit 1; }
 
 # Verify Tailwind installation before running init
-if [ -f "node_modules/.bin/tailwindcss" ]; then
-    npx tailwindcss init -p || { echo "Failed to initialize TailwindCSS"; exit 1; }
-else
-    echo "TailwindCSS binary not found. Installation may have failed."
-    exit 1
-fi
+#if [ -f "node_modules/.bin/tailwindcss" ]; then
+ #   npx tailwindcss init -p || { echo "Failed to initialize TailwindCSS"; exit 1; }
+#else
+#    echo "TailwindCSS binary not found. Installation may have failed."
+#    exit 1
+#fi
 
 else
     echo "Directory $BASE_PATH not found. Exiting."
