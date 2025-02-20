@@ -7,6 +7,7 @@ import subprocess
 import yaml
 import glob
 import ipaddress
+import re
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -279,6 +280,16 @@ def update_network():
 
         # Fetch existing routes from all interfaces
         existing_routes = get_existing_routes()
+
+        # Check if a default route exists on any `enp{number}s0` interface
+        for (to_network, via_gateway), existing_iface in existing_routes.items():
+            if to_network == "default" and re.match(r"enp\d+s0", existing_iface):
+                # Only block if a new gateway is being added, not when removing static routes
+                if gateway and not remove_default and not remove_static and not routes_to_remove:
+                    return jsonify({
+                        "status": "error",
+                        "message": f"Default Gateway already exists on {existing_iface}. Delete the existing default Gateway before adding a new one."
+                    }), 400
 
         for route in routes:
             to_network = route.get("to")
