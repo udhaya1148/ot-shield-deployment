@@ -23,10 +23,6 @@ sudo apt upgrade
 ```
 sudo apt install net-tools 
 ```
-```
-sudo apt install iptables-persistent
-```
-
 
   ## Import project
   ```
