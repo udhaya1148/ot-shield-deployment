@@ -58,7 +58,7 @@ if [ -d "$BASE_PATH" ]; then
     npm install axios
     npm install @xterm/xterm
     npm install socket.io-client
-    npm install xterm-css
+#    npm install xterm-css
 
     # Install TailwindCSS
     npm install -D tailwindcss postcss autoprefixer || { echo "Failed to install TailwindCSS"; exit 1; }
