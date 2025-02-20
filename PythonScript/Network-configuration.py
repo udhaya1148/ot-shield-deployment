@@ -281,15 +281,20 @@ def update_network():
         # Fetch existing routes from all interfaces
         existing_routes = get_existing_routes()
 
-        # Check if a default route exists on any `enp{number}s0` interface
-        for (to_network, via_gateway), existing_iface in existing_routes.items():
-            if to_network == "default" and re.match(r"enp\d+s0", existing_iface):
-                # Only block if a new gateway is being added, not when removing static routes
-                if gateway and not remove_default and not remove_static and not routes_to_remove:
-                    return jsonify({
-                        "status": "error",
-                        "message": f"Default Gateway already exists on {existing_iface}. Delete the existing default Gateway before adding a new one."
-                    }), 400
+        # Check if a default route exists on any `enp{number}s0` interface and store the matching interface
+        existing_iface = None
+
+        for (to_network, via_gateway), iface in existing_routes.items():
+            if to_network == "default" and re.match(r"enp\d+s0", iface):
+                existing_iface = iface  # Store the interface name
+                break  # Stop looping once a default gateway is found
+
+        # Only block if a new default gateway is being added
+        if existing_iface and gateway and not routes and not routes_to_remove and not remove_static:
+            return jsonify({
+                "status": "error",
+                "message": f"Default Gateway already exists on {existing_iface}. You must delete the existing default Gateway before adding a new one."
+            }), 400
 
         for route in routes:
             to_network = route.get("to")
@@ -298,6 +303,9 @@ def update_network():
             # If `via_gateway` is not provided, skip this route
             if not via_gateway:
                 continue  
+
+            if to_network == "default":
+                continue  # Skip adding another default route
 
             if not is_valid_ip(via_gateway):
                 return jsonify({'status': 'error', 'message': f'Invalid gateway IP for route {to_network}.'}), 400
@@ -378,11 +386,12 @@ def update_network():
             for route in routes:
                 if 'to' in route and 'via' in route and is_valid_ip(route['via']):
                     existing_route = next((r for r in static_routes if r['to'] == route['to']), None)
+                    route_metric = int(route.get('metric', default_metric))  # Ensure default metric is applied
                     if existing_route:
                         existing_route['via'] = route['via']  # Overwrite existing static route
-                        existing_route['metric'] = int(route.get('metric', default_metric))
+                        existing_route['metric'] = route_metric
                     else:
-                        updated_static_routes.append({'to': route['to'], 'via': route['via'], 'metric': int(route.get('metric', default_metric))})
+                        updated_static_routes.append({'to': route['to'], 'via': route['via'], 'metric': route_metric})
 
             # Merge static routes
             static_routes = updated_static_routes + static_routes  # Keep old ones unless updated
