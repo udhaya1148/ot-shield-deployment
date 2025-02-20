@@ -240,20 +240,18 @@ function Gateways() {
               </div>
             </>
           )}
-          <div className="mt-4">
+          <div className="flex mt-4">
             <button
               onClick={RemoveGatewayInputs}
-              className="bg-red-500 text-white p-2 rounded-md w-full"
+              className="bg-red-500 text-white p-2 rounded-md w-1/2"
               title="Gateway deleted successfully. Please click 'Save Changes' to apply the update."
             >
               Delete Gateway
             </button>
-          </div>
 
-          <div className="mt-4">
             <button
               onClick={handleUpdate}
-              className="bg-blue-600 text-white p-2 rounded-md w-full"
+              className="bg-blue-600 text-white p-2 rounded-md w-1/2"
             >
               Save Changes
             </button>
