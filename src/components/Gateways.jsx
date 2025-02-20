@@ -90,7 +90,7 @@ function Gateways() {
           fetchNetworkInfo();
           setIsModalOpen(false); // Close the modal
           setSelectedInterface("");
-          window.location.reload();
+//          window.location.reload();
         } else {
           alert(`Error updating network: ${data.message}`);
         }
