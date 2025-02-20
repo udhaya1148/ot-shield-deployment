@@ -61,8 +61,17 @@ if [ -d "$BASE_PATH" ]; then
 #    npm install xterm-css
 
     # Install TailwindCSS
-    npm install -D tailwindcss postcss autoprefixer || { echo "Failed to install TailwindCSS"; exit 1; }
+    # Install TailwindCSS
+npm install -D tailwindcss postcss autoprefixer || { echo "Failed to install TailwindCSS"; exit 1; }
+
+# Verify Tailwind installation before running init
+if [ -f "node_modules/.bin/tailwindcss" ]; then
     npx tailwindcss init -p || { echo "Failed to initialize TailwindCSS"; exit 1; }
+else
+    echo "TailwindCSS binary not found. Installation may have failed."
+    exit 1
+fi
+
 else
     echo "Directory $BASE_PATH not found. Exiting."
     exit 1
