@@ -56,7 +56,7 @@ if [ -d "$BASE_PATH" ]; then
     npm install react-router-dom || { echo "Failed to install react-router-dom"; exit 1; }
     npm install react-icons --save || { echo "Failed to install react-icons"; exit 1; }
     npm install axios
-    npm install xterm
+    npm install @xterm/xterm
     npm install socket.io-client
     npm install xterm-css
 
