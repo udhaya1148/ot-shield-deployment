@@ -131,7 +131,7 @@ function Routing() {
           fetchNetworkInfo();
           setIsModalOpen(false);
           setSelectedInterface("");
-          window.location.reload();
+//          window.location.reload();
         } else {
           alert(`Error updating network: ${data.message}`);
         }
