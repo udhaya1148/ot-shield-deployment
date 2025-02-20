@@ -244,7 +244,7 @@ function Gateways() {
             <button
               onClick={RemoveGatewayInputs}
               className="bg-red-500 text-white p-2 rounded-md w-full"
-              title="Gateway deleted successfully. Please click 'Save Changes' to apply the changes."
+              title="Gateway deleted successfully. Please click 'Save Changes' to apply the update."
             >
               Delete Gateway
             </button>
