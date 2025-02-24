@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { FaEdit, FaTimes } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 function Gateways() {
   const [networkInfo, setNetworkInfo] = useState({});
@@ -13,7 +14,7 @@ function Gateways() {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGatewayValid, setIsGatewayValid] = useState(true);
-  const [deleteGateway, setDeleteGateway] = useState("");
+  const [isGatewaySameAsIp, setIsGatewaySameAsIp] = useState(false);
 
   useEffect(() => {
     // Disable scrolling when the component is mounted
@@ -47,6 +48,13 @@ function Gateways() {
   const handleGatewayChange = (e) => {
     const value = e.target.value;
     setGateway(value);
+
+    //vialidate Gateway is same as IP
+    if (value === ip) {
+      setIsGatewaySameAsIp(true);
+    } else {
+      setIsGatewaySameAsIp(false);
+    }
 
     // Check if the IP address is 0.0.0.0 or a loopback address (127.x.x.x)
     if (value === "0.0.0.0" || value.startsWith("127.")) {
@@ -122,59 +130,108 @@ function Gateways() {
     }
     setIsModalOpen(true); // Open the modal
   };
+  // Delete gateway
 
-  //Remove Gateway inputs
-  const RemoveGatewayInputs = () => {
-    setGateway("");
-    setDeleteGateway("");
+  const handleDeleteDefaultGateway = async (iface) => {
+    if (!iface) {
+      alert("No interface selected for gateway deletion.");
+      return;
+    }
+
+    const selected = networkInfo[iface];
+
+    // Ensure we send IP and Subnet if DHCP is disabled
+    const payload = {
+      interface: iface,
+      remove_default: true, // Only remove default route
+    };
+
+    if (selected && selected["DHCP Status"] !== "DHCP") {
+      payload.ip = selected["IP Address"] || "";
+      payload.subnet = selected["Subnet Mask"] || "";
+    }
+
+    try {
+      const response = await fetch("/api1/update-network", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("Default route deleted successfully");
+        fetchNetworkInfo(); // Refresh UI after deletion
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Failed to delete default gateway:", error);
+      alert("Failed to delete default gateway");
+    }
   };
 
   return (
     <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
       <div className="border border-black mb-2 p-6 bg-white rounded-lg shadow-lg">
         <h3 className="text-3xl text-blue-600 font-bold">Configure Gateway</h3>
-        <div className="flex items-center justify-between mt-4">
-          <div className="font-bold flex-1">Interfaces</div>
-          <div className="font-bold flex-1">Status</div>
-          <div className="font-bold flex-1">Type</div>
-          <div className="font-bold flex-1">IP Address</div>
-          <div className="font-bold flex-1">Subnet</div>
-          <div className="font-bold flex-1">Gateway</div>
-          <div className="font-bold flex-1">DNS</div>
-          <div className="font-bold items-center justify-end">Edit</div>
+
+        <div className="grid grid-cols-8 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
+          <div>Interfaces</div>
+          <div>Status</div>
+          <div>Type</div>
+          <div>IP Address</div>
+          <div>Subnet</div>
+          <div>Gateway</div>
+          <div>Edit</div>
+          <div>Delete</div>
         </div>
+
         {Object.entries(networkInfo).map(([iface, info]) => (
           <div
             key={iface}
-            className="flex items-center border border-black justify-between bg-gray-100 p-2 mb-2 rounded-lg"
+            className="grid grid-cols-8 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
           >
-            <strong className="flex-1">{iface}</strong>
-            <div className="flex-1">{info.Status}</div>
-            <div className="flex-1">{info["DHCP Status"] || "-"}</div>
-            <div className="flex-1">{info["IP Address"] || "-"}</div>
-            <div className="flex-1">
-              {info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}
+            <strong>{iface}</strong>
+            <div>{info.Status}</div>
+            <div>{info["DHCP Status"] || "-"}</div>
+            <div>{info["IP Address"] || "-"}</div>
+            <div>{info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}</div>
+            <div>{info.Status === "Up" ? info["Gateway"] || "-" : "-"}</div>
+
+            <div className="flex justify-center">
+              <button
+                onClick={() => handleInterfaceSelect(iface)}
+                className={`text-blue-500 hover:text-blue-700 ${
+                  isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
+                }`}
+                title={
+                  isEditable(iface)
+                    ? "Edit Gateway"
+                    : "Editing disabled for this interface"
+                }
+                disabled={!isEditable(iface)}
+              >
+                <FaEdit />
+              </button>
             </div>
-            <div className="flex-1">
-              {info.Status === "Up" ? info["Gateway"] || "-" : "-"}
+
+            <div className="flex justify-center">
+              <button
+                onClick={() => handleDeleteDefaultGateway(iface)}
+                className={`text-red-500 hover:text-red-700 ${
+                  isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
+                }`}
+                title={
+                  isEditable(iface)
+                    ? "Delete Gateway"
+                    : "Deleting disabled for this interface"
+                }
+                disabled={!isEditable(iface)}
+              >
+                <MdDelete />
+              </button>
             </div>
-            <div className="flex-1">
-              {info.Status === "Up" ? info["DNS"] || "-" : "-"}
-            </div>
-            <button
-              onClick={() => handleInterfaceSelect(iface)}
-              className={`text-blue-500 hover:text-blue-700 ${
-                isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
-              }`}
-              title={
-                isEditable(iface)
-                  ? "Edit Network Configuration"
-                  : "Editing disabled for this interface"
-              }
-              disabled={!isEditable(iface)}
-            >
-              <FaEdit />
-            </button>
           </div>
         ))}
       </div>
@@ -232,6 +289,11 @@ function Gateways() {
                   placeholder="Enter Gateway"
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
+                {isGatewaySameAsIp && (
+                  <span className="text-red-500 text-md ml-2">
+                    Gateway is same as Interface IP
+                  </span>
+                )}
                 {!isGatewayValid && (
                   <span className="text-red-500 text-xs ml-2">
                     Invalid Gateway Address
@@ -240,22 +302,13 @@ function Gateways() {
               </div>
             </>
           )}
-          <div className="flex mt-4">
-            <button
-              onClick={RemoveGatewayInputs}
-              className="bg-red-500 text-white p-2 rounded-md w-1/2"
-              title="Gateway deleted successfully. Please click 'Save Changes' to apply the update."
-            >
-              Delete Gateway
-            </button>
 
-            <button
-              onClick={handleUpdate}
-              className="bg-blue-600 text-white p-2 rounded-md w-1/2"
-            >
-              Save Changes
-            </button>
-          </div>
+          <button
+            onClick={handleUpdate}
+            className="bg-blue-600 text-white p-2 rounded-md mt-4"
+          >
+            Update
+          </button>
         </div>
       </Modal>
     </div>
