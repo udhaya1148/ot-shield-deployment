@@ -26,22 +26,23 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api5/login", { username, password }, { timeout: 5000 }); // 5 seconds timeout
+      const response = await axios.post("/api5/login", { username, password }, { timeout: 5000 });
       if (response.data.success) {
-        // Save credentials and IP in local storage
-        localStorage.setItem("username", username);
-        localStorage.setItem("password", password);
-        localStorage.setItem("ip", ip); // Store the extracted IP address
-
+        // Store authentication state in sessionStorage (instead of localStorage)
+        sessionStorage.setItem("isAuthenticated", "true");
+        sessionStorage.setItem("username", username);
+        sessionStorage.setItem("ip", ip);
+  
         navigate("/home"); // Redirect to home page after successful login
       } else {
         setError(response.data.message || "Invalid credentials");
       }
     } catch (err) {
       setError("Invalid Username or Password.");
-      console.error(err); // Log to get more details on the error
+      console.error(err);
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
