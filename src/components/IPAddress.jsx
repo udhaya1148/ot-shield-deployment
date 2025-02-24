@@ -27,7 +27,6 @@ function IPAddress() {
     return () => {
       document.body.style.overflowX = "auto";
       document.body.style.overflowY = "auto";
-
     };
   }, []);
 
@@ -51,22 +50,23 @@ function IPAddress() {
       alert("IP Address and Subnet are mandatory fields!");
       return;
     }
-  
+
     // Validate gateway and routes
     if ((gateway && !routes) || (routes && !gateway)) {
       alert("Gateway and Routes must be provided together!");
       return;
     }
-  
+
     // Validate routes format
-    const routePattern = /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})(,\s*\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})*$/;
+    const routePattern =
+      /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})(,\s*\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})*$/;
     if (routes && !routePattern.test(routes)) {
       alert(
         "Invalid routes format! Ensure each route follows the 'ip/subnet' format, e.g. 192.168.1.0/24"
       );
       return;
     }
-  
+
     const payload = {
       interface: selectedInterface,
       new_interface_name: editedInterfaceName || selectedInterface, // Include the edited name
@@ -78,7 +78,7 @@ function IPAddress() {
       routes: routes ? routes.split(",").map((route) => route.trim()) : [],
       metric: metric ? parseInt(metric, 10) : null,
     };
-  
+
     fetch("/api1/update-network", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -98,7 +98,7 @@ function IPAddress() {
       })
       .catch((error) => console.error("Error updating network:", error));
   };
-  
+
   // Function to check if an interface is editable (blocking enp6s0f0 and similar names)
   const isEditable = (iface) => {
     // Block editing if the interface name matches enp6s0f0 pattern
@@ -135,124 +135,128 @@ function IPAddress() {
   };
 
   return (
-    
-      <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
-        <div className="border border-black mb-2 p-6 bg-white rounded-lg shadow-lg">
-          <h3 className="text-3xl text-blue-600 font-bold">
-            Configure IP Address
-          </h3>
-          <div className="flex items-center justify-between mt-4">
-            <div className="font-bold flex-1">Interfaces</div>
-            <div className="font-bold flex-1">Status</div>
-            <div className="font-bold flex-1">Type</div>
-            <div className="font-bold flex-1">IP Address</div>
-            <div className="font-bold flex-1">Subnet</div>
-            <div className="font-bold flex-1">Gateway</div>
-            <div className="font-bold flex-1">DNS</div>
-            <div className="font-bold items-center justify-end">Edit</div>
-          </div>
-          {Object.entries(networkInfo).map(([iface, info]) => (
-            <div
-              key={iface}
-              className="flex items-center border border-black justify-between bg-gray-100 p-2 mb-2 rounded-lg"
-            >
-              <strong className="flex-1">{iface}</strong>
-              <div className="flex-1">{info.Status}</div>
-              <div className="flex-1">{info["DHCP Status"] || "-"}</div>
-              <div className="flex-1">{info["IP Address"] || "-"}</div>
-              <div className="flex-1">
-                {info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}
-              </div>
-              <div className="flex-1">
+    <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
+      <div className="border border-black mb-2 p-6 bg-white rounded-lg shadow-lg">
+        <h3 className="text-3xl text-blue-600 font-bold">
+          Configure IP Address
+        </h3>
+        <div className="grid grid-cols-6 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
+          <div>Interfaces</div>
+          <div>Status</div>
+          <div>Type</div>
+          <div>IP Address</div>
+          <div>Subnet</div>
+          <div>Edit</div>
+        </div>
+
+        {Object.entries(networkInfo).map(([iface, info]) => (
+          <div
+            key={iface}
+            className="grid grid-cols-6 items-center text-center border border-black bg-gray-100 p-2 mb-2 rounded-lg"
+          >
+            <strong className="flex-1">{iface}</strong>
+            <div className="flex-1">{info.Status}</div>
+            <div className="flex-1">{info["DHCP Status"] || "-"}</div>
+            <div className="flex-1">{info["IP Address"] || "-"}</div>
+            <div className="flex-1">
+              {info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}
+            </div>
+            {/* <div className="flex-1">
                 {info.Status === "Up" ? info["Gateway"] || "-" : "-"}
               </div>
               <div className="flex-1">
                 {info.Status === "Up" ? info["DNS"] || "-" : "-"}
-              </div>
+              </div> */}
+            <div className="flex justify-center">
               <button
                 onClick={() => handleInterfaceSelect(iface)}
                 className={`text-blue-500 hover:text-blue-700 ${
                   isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
                 }`}
-                title={isEditable(iface) ? "Edit Network Configuration" : "Editing disabled for this interface"}
+                title={
+                  isEditable(iface)
+                    ? "Edit Network Configuration"
+                    : "Editing disabled for this interface"
+                }
                 disabled={!isEditable(iface)}
               >
                 <FaEdit />
               </button>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        {/* Modal for editing network configuration */}
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <div className="border border-gray-500 p-6 relative">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-2 right-2 text-xl text-gray-600 hover:text-gray-900"
-              title="Close Modal"
+      {/* Modal for editing network configuration */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="border border-gray-500 p-6 relative">
+          <button
+            onClick={() => setIsModalOpen(false)}
+            className="absolute top-2 right-2 text-xl text-gray-600 hover:text-gray-900"
+            title="Close Modal"
+          >
+            <FaTimes />
+          </button>
+          <div className="flex items-center mb-4">
+            <label className="w-1/3 text-left font-bold flex items-center justify-between">
+              <span>Interface Name</span>
+              <span>:</span>
+            </label>
+            <input
+              type="text"
+              value={editedInterfaceName}
+              onChange={(e) => setEditedInterfaceName(e.target.value)}
+              placeholder="Enter new interface name"
+              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+            />
+          </div>
+          {/* DHCP/Manual Selection */}
+          <div className="flex items-center mb-4">
+            <label className="w-1/3 text-left font-bold flex items-center justify-between">
+              <span>DHCP/Manual</span>
+              <span>:</span>
+            </label>
+            <select
+              value={dhcpEnabled}
+              onChange={(e) => setDhcpEnabled(e.target.value)}
+              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
             >
-              <FaTimes />
-            </button>
-            <div className="flex items-center mb-4">
-              <label className="w-1/3 text-left font-bold flex items-center justify-between">
-                <span>Interface Name</span>
-                <span>:</span>
-              </label>
-              <input
-                type="text"
-                value={editedInterfaceName}
-                onChange={(e) => setEditedInterfaceName(e.target.value)}
-                placeholder="Enter new interface name"
-                className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
-              />
-            </div>
-            {/* DHCP/Manual Selection */}
-            <div className="flex items-center mb-4">
-              <label className="w-1/3 text-left font-bold flex items-center justify-between">
-                <span>DHCP/Manual</span>
-                <span>:</span>
-              </label>
-              <select
-                value={dhcpEnabled}
-                onChange={(e) => setDhcpEnabled(e.target.value)}
-                className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
-              >
-                <option value="DHCP">DHCP</option>
-                <option value="Manual">Manual</option>
-              </select>
-            </div>
-            {/* Only show these fields if DHCP is not enabled */}
-            {dhcpEnabled === "Manual" && (
-              <>
-                <div className="flex items-center mb-4">
-                  <label className="w-1/3 text-left font-bold flex items-center justify-between">
-                    <span>IP Address</span>
-                    <span>:</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={ip}
-                    onChange={(e) => setIp(e.target.value)}
-                    placeholder="Enter IP Address"
-                    className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
-                  />
-                </div>
+              <option value="DHCP">DHCP</option>
+              <option value="Manual">Manual</option>
+            </select>
+          </div>
+          {/* Only show these fields if DHCP is not enabled */}
+          {dhcpEnabled === "Manual" && (
+            <>
+              <div className="flex items-center mb-4">
+                <label className="w-1/3 text-left font-bold flex items-center justify-between">
+                  <span>IP Address</span>
+                  <span>:</span>
+                </label>
+                <input
+                  type="text"
+                  value={ip}
+                  onChange={(e) => setIp(e.target.value)}
+                  placeholder="Enter IP Address"
+                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+                />
+              </div>
 
-                <div className="flex items-center mb-4">
-                  <label className="w-1/3 text-left font-bold flex items-center justify-between">
-                    <span>Subnet Mask / CIDR</span>
-                    <span>:</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={subnet}
-                    onChange={(e) => setSubnet(e.target.value)}
-                    placeholder="Enter Subnet Mask or CIDR"
-                    className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
-                  />
-                </div>
+              <div className="flex items-center mb-4">
+                <label className="w-1/3 text-left font-bold flex items-center justify-between">
+                  <span>Subnet Mask / CIDR</span>
+                  <span>:</span>
+                </label>
+                <input
+                  type="text"
+                  value={subnet}
+                  onChange={(e) => setSubnet(e.target.value)}
+                  placeholder="Enter Subnet Mask or CIDR"
+                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+                />
+              </div>
 
-                <div className="flex items-center mb-4">
+              {/* <div className="flex items-center mb-4">
                   <label className="w-1/3 text-left font-bold flex items-center justify-between">
                     <span>DNS (comma separated)</span>
                     <span>: </span>
@@ -264,21 +268,19 @@ function IPAddress() {
                     placeholder="Enter DNS (optional)"
                     className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                   />
-                </div>
-              </>
-            )}
-            <button
-              onClick={handleUpdate}
-              className="bg-blue-600 text-white p-2 rounded-md mt-4"
-            >
-              Update
-            </button>
-          </div>
-        </Modal>
-      </div>
-    
+                </div> */}
+            </>
+          )}
+          <button
+            onClick={handleUpdate}
+            className="bg-blue-600 text-white p-2 rounded-md mt-4"
+          >
+            Update
+          </button>
+        </div>
+      </Modal>
+    </div>
   );
 }
 
 export default IPAddress;
-
