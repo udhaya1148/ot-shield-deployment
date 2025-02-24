@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { FaEdit, FaTimes } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 function Routing() {
   const [networkInfo, setNetworkInfo] = useState({});
@@ -19,7 +20,7 @@ function Routing() {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViaValid, setIsViaValid] = useState(true);
-  const [deleteRoutes, setDeleteRoutes] = useState("");
+  const [isViaSameAsIp, setIsViaSameAsIp] = useState(false);
 
   useEffect(() => {
     // Disable scrolling when the component is mounted
@@ -66,6 +67,13 @@ function Routing() {
     const value = e.target.value;
     setRouteVia(value);
 
+    // chexk via is same as ip 
+    if (value === ip) {
+      setIsViaSameAsIp(true);
+    } else {
+      setIsViaSameAsIp(false);
+    }
+
     // Check if the IP address is 0.0.0.0 or a loopback address (127.x.x.x)
     if (value === "0.0.0.0" || value.startsWith("127.")) {
       setIsViaValid(false); // Set validity to false if it's a loopback or 0.0.0.0
@@ -98,33 +106,61 @@ function Routing() {
       return;
     }
 
-    // Get existing routes
+    // Get existing routes from the selected interface
     const existingRoutes = networkInfo[selectedInterface]?.Routes || [];
 
-    // Identify routes to remove
-    const removeRoutes = existingRoutes.filter(
-      (route) => route.to !== "default" // Remove everything except default
-    );
+    // Remove extra "default" routes but keep only one
+    const filteredExistingRoutes = [];
+    let defaultRouteFound = false;
 
-    // Only add new routes if user provides input
+    existingRoutes.forEach((route) => {
+      if (route.to === "default") {
+        if (!defaultRouteFound) {
+          filteredExistingRoutes.push(route);
+          defaultRouteFound = true; // Keep only the first "default" route
+        }
+      } else {
+        filteredExistingRoutes.push(route); // Keep non-default routes
+      }
+    });
+
+    // If the user provides new route input, add it
     const addedRoutes =
       routeTo && routeVia
-        ? [{ metric: routeMetric, to: routeTo, via: routeVia }]
+        ? [
+            {
+              metric: routeMetric ? Number(routeMetric) : 100,
+              to: routeTo,
+              via: routeVia,
+            },
+          ]
         : [];
 
-    // If user provides no route input, force clear existing routes
-    const finalRoutes = addedRoutes.length > 0 ? addedRoutes : [];
+    // Combine preserved routes and new routes
+    const finalRoutes = [...filteredExistingRoutes, ...addedRoutes]; // <-- Now finalRoutes is defined
+
+    // Check if changes are actually made
+    const existingConfig = networkInfo[selectedInterface];
+    if (
+      existingConfig &&
+      existingConfig.IP === ip &&
+      existingConfig.Subnet === subnet &&
+      existingConfig.Gateway === gateway &&
+      JSON.stringify(existingConfig.Routes) === JSON.stringify(finalRoutes)
+    ) {
+      alert("No changes detected!");
+      return; // Stop sending request if nothing changed
+    }
 
     const payload = {
       interface: selectedInterface,
-      new_interface_name: editedInterfaceName || selectedInterface,
       ip: dhcpEnabled === "DHCP" ? "" : ip,
       subnet: dhcpEnabled === "DHCP" ? "" : subnet,
       gateway: gateway || null,
       dns: dns ? dns.split(",").map((d) => d.trim()) : [],
       dhcp: dhcpEnabled === "DHCP",
-      routes: finalRoutes, // Ensure this overwrites old routes
-      remove_routes: removeRoutes,
+      routes: finalRoutes,
+      remove_routes: [],
     };
 
     fetch("/api1/update-network", {
@@ -139,7 +175,6 @@ function Routing() {
           fetchNetworkInfo();
           setIsModalOpen(false);
           setSelectedInterface("");
-          //          window.location.reload();
         } else {
           alert(`Error updating network: ${data.message}`);
         }
@@ -183,73 +218,135 @@ function Routing() {
       setRoutes(
         selected["Routes"]
           ? selected["Routes"]
+              .filter((route) => route.to !== "default")
               .map((route) => `${route.metric}, ${route.to}, ${route.via}`)
-              .join(", ") // Combine the 'to' and 'via' properties
+              .join(", ")
           : ""
       );
     }
     setIsModalOpen(true); // Open the modal
   };
 
-  const RemoveRoutesInput = () => {
-    setRouteMetric("");
-    setRouteTo("");
-    setRouteVia("");
-    setDeleteRoutes("");
+  const handleDeleteRoutes = async (iface) => {
+    if (!iface) {
+      alert("No interface selected for gateway deletion.");
+      return;
+    }
+
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the Route for ${iface}?`
+    );
+    if (!confirmDelete) return;
+
+    const selected = networkInfo[iface];
+
+    // Ensure we send IP and Subnet if DHCP is disabled
+    const payload = {
+      interface: iface,
+      remove_static: true, // Only remove default route
+    };
+
+    if (selected && selected["DHCP Status"] !== "DHCP") {
+      payload.ip = selected["IP Address"] || "";
+      payload.subnet = selected["Subnet Mask"] || "";
+    }
+
+    try {
+      const response = await fetch("/api1/update-network", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("Route deleted successfully");
+        fetchNetworkInfo(); // Refresh UI after deletion
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Failed to delete routes:", error);
+      alert("Failed to delete routes");
+    }
   };
 
   return (
     <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
       <div className="border border-black mb-2 p-6 bg-white rounded-lg shadow-lg">
-        <h3 className="text-3xl text-blue-600 font-bold">
-          Available Interfaces
-        </h3>
-        <div className="flex items-center justify-between mt-4">
-          <div className="font-bold flex-1">Interfaces</div>
-          <div className="font-bold flex-1">Status</div>
-          <div className="font-bold flex-1">Type</div>
-          <div className="font-bold flex-1">IP Address</div>
-          <div className="font-bold flex-1">Subnet</div>
-          <div className="font-bold flex-1">Gateway</div>
-          <div className="font-bold flex-1">DNS</div>
-          <div className="font-bold items-center justify-end">Edit</div>
-        </div>
-        {Object.entries(networkInfo).map(([iface, info]) => (
-          <div
-            key={iface}
-            className="flex items-center border border-black justify-between bg-gray-100 p-2 mb-2 rounded-lg"
-          >
-            <strong className="flex-1">{iface}</strong>
-            <div className="flex-1">{info.Status}</div>
-            <div className="flex-1">{info["DHCP Status"] || "-"}</div>
-            <div className="flex-1">{info["IP Address"] || "-"}</div>
-            <div className="flex-1">
-              {info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}
-            </div>
-            <div className="flex-1">
-              {info.Status === "Up" ? info["Gateway"] || "-" : "-"}
-            </div>
-            <div className="flex-1">
-              {info.Status === "Up" ? info["DNS"] || "-" : "-"}
-            </div>
-            <button
-              onClick={() => handleInterfaceSelect(iface)}
-              className={`text-blue-500 hover:text-blue-700 ${
-                isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
-              }`}
-              title={
-                isEditable(iface)
-                  ? "Edit Network Configuration"
-                  : "Editing disabled for this interface"
-              }
-              disabled={!isEditable(iface)}
-            >
-              <FaEdit />
-            </button>
-          </div>
-        ))}
-      </div>
+        <h3 className="text-3xl text-blue-600 font-bold">Configure Routes</h3>
 
+        <div className="grid grid-cols-9 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
+          <div>Interfaces</div>
+          <div>Status</div>
+          <div>Type</div>
+          <div>IP Address</div>
+          <div>Subnet</div>
+          <div>To</div>
+          <div>Via</div>
+          <div>Edit</div>
+          <div>Delete</div>
+        </div>
+
+        {Object.entries(networkInfo).map(([iface, info]) => {
+          // Get static routes (excluding "default" routes)
+          const staticRoutes =
+            info["Routes"]?.filter((route) => route.to !== "default") || [];
+
+          return (
+            <div
+              key={iface}
+              className="grid grid-cols-9 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
+            >
+              <strong>{iface}</strong>
+              <div>{info.Status}</div>
+              <div>{info["DHCP Status"] || "-"}</div>
+              <div>{info["IP Address"] || "-"}</div>
+              <div>
+                {info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}
+              </div>
+              <div>{staticRoutes[0]?.to || "-"}</div>
+              <div>{staticRoutes[0]?.via || "-"}</div>
+
+              {/* Edit Button */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => handleInterfaceSelect(iface)}
+                  className={`text-blue-500 hover:text-blue-700 ${
+                    isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
+                  }`}
+                  title={
+                    isEditable(iface)
+                      ? "Edit Routes"
+                      : "Editing disabled for this interface"
+                  }
+                  disabled={!isEditable(iface)}
+                >
+                  <FaEdit />
+                </button>
+              </div>
+
+              {/* Delete Button */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => handleDeleteRoutes(iface)}
+                  className={`text-red-500 hover:text-red-700 ${
+                    isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
+                  }`}
+                  title={
+                    isEditable(iface)
+                      ? "Delete Routes"
+                      : "Deleting disabled for this interface"
+                  }
+                  disabled={!isEditable(iface)}
+                >
+                  <MdDelete />
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
       {/* Modal for editing network configuration */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className="border border-gray-500 p-6 relative">
@@ -336,6 +433,12 @@ function Routing() {
                   placeholder="Enter Gateway"
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
+                {/* show error if via is same as ip*/}
+                {isViaSameAsIp && (
+                  <span className="text-red-500 text-md ml-2">
+                    Via cannot be same as Interface IP
+                  </span>
+                )}
                 {!isViaValid && (
                   <span className="text-red-500 text-md ml-2">
                     Invalid via Address
@@ -344,21 +447,13 @@ function Routing() {
               </div>
             </>
           )}
-          <div className="flex mt-4">
-            <button
-              onClick={RemoveRoutesInput}
-              className="bg-red-500 text-white p-2 rounded-md w-1/2"
-              title="Route deleted successfully. Please click 'Save Changes' to apply the update."
-            >
-              Delete Routes
-            </button>
-            <button
-              onClick={handleUpdate}
-              className="bg-blue-600 text-white p-2 rounded-md ml-2 w-1/2"
-            >
-              Save Changes
-            </button>
-          </div>
+
+          <button
+            onClick={handleUpdate}
+            className="bg-blue-600 text-white p-2 rounded-md mt-4"
+          >
+            Update
+          </button>
         </div>
       </Modal>
     </div>
