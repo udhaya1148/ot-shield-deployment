@@ -276,10 +276,10 @@ function Routing() {
       <div className="border border-black mb-2 p-6 bg-white rounded-lg shadow-lg">
         <h3 className="text-3xl text-blue-600 font-bold">Configure Routes</h3>
 
-        <div className="grid grid-cols-9 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
+        <div className="grid grid-cols-7 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
           <div>Interfaces</div>
-          <div>Status</div>
-          <div>Type</div>
+          {/* <div>Status</div>
+          <div>Type</div> */}
           <div>IP Address</div>
           <div>Subnet</div>
           <div>To</div>
@@ -296,11 +296,11 @@ function Routing() {
           return (
             <div
               key={iface}
-              className="grid grid-cols-9 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
+              className="grid grid-cols-7 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
             >
               <strong>{iface}</strong>
-              <div>{info.Status}</div>
-              <div>{info["DHCP Status"] || "-"}</div>
+              {/* <div>{info.Status}</div>
+              <div>{info["DHCP Status"] || "-"}</div> */}
               <div>{info["IP Address"] || "-"}</div>
               <div>
                 {info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}
