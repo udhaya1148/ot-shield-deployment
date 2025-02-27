@@ -20,7 +20,7 @@ function Routing() {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViaValid, setIsViaValid] = useState(true);
-  const [isViaSameAsIp, setIsViaSameAsIp] = useState(false);
+ // const [isViaSameAsIp, setIsViaSameAsIp] = useState(false);
 
   useEffect(() => {
     // Disable scrolling when the component is mounted
@@ -68,11 +68,11 @@ function Routing() {
     setRouteVia(value);
 
     // chexk via is same as ip 
-    if (value === ip) {
-      setIsViaSameAsIp(true);
-    } else {
-      setIsViaSameAsIp(false);
-    }
+    //if (value === ip) {
+    //  setIsViaSameAsIp(true);
+    //} else {
+    //  setIsViaSameAsIp(false);
+    //}
 
     // Check if the IP address is 0.0.0.0 or a loopback address (127.x.x.x)
     if (value === "0.0.0.0" || value.startsWith("127.")) {
