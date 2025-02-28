@@ -207,14 +207,22 @@ def is_gateway_reachable(interface, gateway):
         return False
 
 def is_valid_gateway(interface, ip, subnet, gateway):
-    """Validate if the gateway is within the subnet range and reachable."""
+    """Validate if the gateway is within the subnet range OR is already in routing table."""
     if not gateway:
         return True  # No gateway, no validation needed
+
     try:
+        # Check if gateway is in the subnet
         network = ipaddress.IPv4Network(f"{ip}/{subnet}", strict=False)
-        if ipaddress.IPv4Address(gateway) not in network:
-            return False  # Gateway not in subnet
-        return is_gateway_reachable(interface, gateway)
+        if ipaddress.IPv4Address(gateway) in network:
+            return True  # Gateway is valid in subnet
+        
+        # Check if the gateway is already in the routing table
+        result = subprocess.run(['ip', 'route', 'show'], capture_output=True, text=True)
+        if gateway in result.stdout:
+            return True  # Gateway is already used in routes
+        
+        return False  # Gateway not in subnet and not in route table
     except ValueError:
         return False  # Invalid IP or subnet
    
