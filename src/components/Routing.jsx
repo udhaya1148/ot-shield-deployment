@@ -434,11 +434,11 @@ function Routing() {
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
                 {/* show error if via is same as ip*/}
-                {isViaSameAsIp && (
+{/*                 {isViaSameAsIp && (
                   <span className="text-red-500 text-md ml-2">
                     Via cannot be same as Interface IP
                   </span>
-                )}
+                )} */}
                 {!isViaValid && (
                   <span className="text-red-500 text-md ml-2">
                     Invalid via Address
