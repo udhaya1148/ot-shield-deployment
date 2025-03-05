@@ -26,5 +26,8 @@ sudo ./terminal-service.sh
 echo "Running terminal.sh..."
 sudo ./login-service.sh
 
+echo "Running hostname.sh..."
+sudo ./hostname.sh
+
 echo "All scripts executed successfully."
 
