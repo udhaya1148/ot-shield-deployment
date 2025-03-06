@@ -61,6 +61,8 @@ if [ -d "$BASE_PATH" ]; then
     npm install axios
     echo "xterm install"
     npm install @xterm/xterm
+    echo "xterm install"
+    npm install xterm
     npm install socket.io-client
 #    npm install xterm-css
 
