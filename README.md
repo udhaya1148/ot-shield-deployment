@@ -41,7 +41,7 @@ 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
 ls
 ```
 ```
-sudo mv <file name> Chiefnet-OT-Shield
+sudo mv <file name start with Chiefnet-OT-Shield> Chiefnet-OT-Shield
 ```
 
   ## Install dependencies
