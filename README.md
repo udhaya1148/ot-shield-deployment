@@ -48,21 +48,15 @@ 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
   ```
 
   ## Setup_Services
-  ```
- cd 
-```
 ```
 cd /usr/bin/Chiefnet-OT-Shield
 ```
 ```
-  sudo chmod +x /usr/bin/Chiefnet-OT-Shield/Scripts/*.sh
+sudo chmod +x /usr/bin/Chiefnet-OT-Shield/Scripts/*.sh
  ```
   ```
   sudo chmod +x start-service.sh
   ```
-```
-sudo apt install python3.12-venv
-```
   ```
  sudo ./start-service.sh
   ```
