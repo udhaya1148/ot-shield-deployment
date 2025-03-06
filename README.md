@@ -37,7 +37,9 @@ sudo apt install net-tools
 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
   ```
 ## Change file name as Chiefnet-OT-Shield
-```sudo mv <file name> Chiefnet-OT-Shield```
+```
+sudo mv <file name> Chiefnet-OT-Shield
+```
 
   ## Install dependencies
   ```
