@@ -41,6 +41,7 @@ echo "Activating virtual environment and installing dependencies..."
 source "$VIRTUAL_ENV_PATH/bin/activate"
 pip install --upgrade pip
 pip install flask flask-socketio gunicorn eventlet paramiko
+pip install python-pam
 
 # Reload systemd and start the service
 echo "Reloading systemd and starting the service..."
