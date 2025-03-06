@@ -38,6 +38,9 @@ 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
   ```
 ## Change file name as Chiefnet-OT-Shield
 ```
+ls
+```
+```
 sudo mv <file name> Chiefnet-OT-Shield
 ```
 
@@ -83,6 +86,5 @@ Use `<ip>:5050` to open the UI in your browser.
 
 
 
-source myenv/bin/activate
-sudo apt install python3-pamela
+
 
