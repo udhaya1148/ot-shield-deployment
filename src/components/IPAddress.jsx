@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import SideMenu from "./SideMenu";
-
-import Modal from "./Modal"; // Import the Modal component
+import Modal from "./Modal";
 import { FaEdit, FaTimes } from "react-icons/fa";
+import { TiCancel } from "react-icons/ti";
 
 function IPAddress() {
   const [networkInfo, setNetworkInfo] = useState({});
   const [selectedInterface, setSelectedInterface] = useState("");
-  const [editedInterfaceName, setEditedInterfaceName] = useState(""); // State for editing interface name
+  const [editedInterfaceName, setEditedInterfaceName] = useState(""); 
   const [ip, setIp] = useState("");
   const [subnet, setSubnet] = useState("");
   const [gateway, setGateway] = useState("");
@@ -16,7 +15,7 @@ function IPAddress() {
   const [routes, setRoutes] = useState("");
   const [metric, setMetric] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
   useEffect(() => {
     // Disable scrolling when the component is mounted
@@ -99,10 +98,10 @@ function IPAddress() {
       .catch((error) => console.error("Error updating network:", error));
   };
 
-  // Function to check if an interface is editable (blocking enp6s0f0 and similar names)
+  // F check if an interface is editable (blocking enp6s0f0 and similar names)
   const isEditable = (iface) => {
     // Block editing if the interface name matches enp6s0f0 pattern
-    return !/^enp6s0f\d+$/.test(iface);
+     return !/^enp6s0f\d+$/.test(iface);
   };
 
   const handleInterfaceSelect = (iface) => {
@@ -158,21 +157,11 @@ function IPAddress() {
             <div className="flex-1">{info.Status}</div>
             <div className="flex-1">{info["DHCP Status"] || "-"}</div>
             <div className="flex-1">{info["IP Address"] || "-"}</div>
-            <div className="flex-1">
-              {info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}
-            </div>
-            {/* <div className="flex-1">
-                {info.Status === "Up" ? info["Gateway"] || "-" : "-"}
-              </div>
-              <div className="flex-1">
-                {info.Status === "Up" ? info["DNS"] || "-" : "-"}
-              </div> */}
+            <div className="flex-1">{info["Subnet Mask"] || "-"}</div>
             <div className="flex justify-center">
               <button
                 onClick={() => handleInterfaceSelect(iface)}
-                className={`text-blue-500 hover:text-blue-700 ${
-                  isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
-                }`}
+                className="text-blue-500 hover:text-blue-700 "
                 title={
                   isEditable(iface)
                     ? "Edit Network Configuration"
@@ -180,7 +169,7 @@ function IPAddress() {
                 }
                 disabled={!isEditable(iface)}
               >
-                <FaEdit />
+                {isEditable(iface) ? <FaEdit /> : <TiCancel className="text-red-500"/>}
               </button>
             </div>
           </div>
@@ -255,20 +244,6 @@ function IPAddress() {
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
               </div>
-
-              {/* <div className="flex items-center mb-4">
-                  <label className="w-1/3 text-left font-bold flex items-center justify-between">
-                    <span>DNS (comma separated)</span>
-                    <span>: </span>
-                  </label>
-                  <input
-                    type="text"
-                    value={dns}
-                    onChange={(e) => setDns(e.target.value)}
-                    placeholder="Enter DNS (optional)"
-                    className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
-                  />
-                </div> */}
             </>
           )}
           <button

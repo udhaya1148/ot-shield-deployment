@@ -9,8 +9,8 @@ Description=Flask Application with Auto-reload on Changes
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /usr/bin/ot-shield-testing/PythonScript/host.py
-WorkingDirectory=/usr/bin/ot-shield-testing/PythonScript
+ExecStart=/usr/bin/python3 /usr/bin/Chiefnet-OT-Shield/PythonScript/host.py
+WorkingDirectory=/usr/bin/Chiefnet-OT-Shield/PythonScript
 User=$USERNAME
 Restart=always
 

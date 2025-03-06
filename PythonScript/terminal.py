@@ -14,21 +14,14 @@ def ssh_connect_handler(sid, username, password, target_ip, cols=80, rows=24):
     try:
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(
-            target_ip,  # Use the dynamically passed target IP address
-            port=22,
-            username=username,  # Use the dynamically passed username
-            password=password,  # Use the dynamically passed password
-            timeout=10
-        )
+        ssh_client.connect(target_ip, port=22, username=username, password=password, timeout=10)
+
         channel = ssh_client.invoke_shell(term='xterm', width=cols, height=rows)
         ssh_sessions[sid] = channel
 
-        ## Read and discard initial outputs (clear initial prompt and MOTD)
         while channel.recv_ready():
             channel.recv(1024)
 
-        # Clear the screen without re-triggering a prompt
         channel.send("clear\n")
 
         while not channel.closed:
@@ -51,24 +44,14 @@ def ssh_connect_handler(sid, username, password, target_ip, cols=80, rows=24):
 @socketio.on('connect')
 def handle_connect():
     sid = request.sid
-    username = request.args.get('username')  # Get credentials from query params
-    password = request.args.get('password')  # Get password from query params
-    target_ip = request.args.get('ip')  # Get the IP address from query params
+    username = request.args.get('username')  # Get username from frontend session
+    password = request.args.get('password')  # Get password from frontend session
+    target_ip = request.args.get('ip')  # Get IP from frontend session
 
     if username and password and target_ip:
         threading.Thread(target=ssh_connect_handler, args=(sid, username, password, target_ip)).start()
     else:
         emit('error', {'message': 'Missing credentials or IP address'}, room=sid)
-
-@socketio.on('resize')
-def handle_resize(data):
-    sid = request.sid
-    if sid in ssh_sessions:
-        channel = ssh_sessions[sid]
-        if channel:
-            cols = data.get('cols', 80)
-            rows = data.get('rows', 24)
-            channel.resize_pty(width=cols, height=rows)
 
 @socketio.on('terminal_input')
 def handle_terminal_input(data):
@@ -95,8 +78,8 @@ if __name__ == "__main__":
 
     subprocess.run([
         'gunicorn',
-        '-w', '1',  # Number of worker processes
-        '-k', 'eventlet',  # Use eventlet worker
-        '-b', '0.0.0.0:5054',  # Bind to 0.0.0.0:5004
-        app_module  # Pass the module name dynamically
+        '-w', '1',
+        '-k', 'eventlet',
+        '-b', '0.0.0.0:5054',
+        app_module
     ])

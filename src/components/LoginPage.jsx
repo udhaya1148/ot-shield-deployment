@@ -31,6 +31,7 @@ function LoginPage() {
         // Store authentication state in sessionStorage (instead of localStorage)
         sessionStorage.setItem("isAuthenticated", "true");
         sessionStorage.setItem("username", username);
+        sessionStorage.setItem("password", password);
         sessionStorage.setItem("ip", ip);
   
         navigate("/home"); // Redirect to home page after successful login

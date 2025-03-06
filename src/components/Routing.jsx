@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { FaEdit, FaTimes } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { TiCancel } from "react-icons/ti";
 
 function Routing() {
   const [networkInfo, setNetworkInfo] = useState({});
@@ -20,7 +21,7 @@ function Routing() {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViaValid, setIsViaValid] = useState(true);
- // const [isViaSameAsIp, setIsViaSameAsIp] = useState(false);
+  // const [isViaSameAsIp, setIsViaSameAsIp] = useState(false);
 
   useEffect(() => {
     // Disable scrolling when the component is mounted
@@ -67,7 +68,7 @@ function Routing() {
     const value = e.target.value;
     setRouteVia(value);
 
-    // chexk via is same as ip 
+    // chexk via is same as ip
     //if (value === ip) {
     //  setIsViaSameAsIp(true);
     //} else {
@@ -182,48 +183,65 @@ function Routing() {
       .catch((error) => console.error("Error updating network:", error));
   };
 
-  // Function to check if an interface is editable (blocking enp6s0f0 and similar names)
-  const isEditable = (iface) => {
-    // Block editing if the interface name matches enp6s0f0 pattern
-    return !/^enp6s0f\d+$/.test(iface);
+  const isEditable = (iface, info) => {
+    // Ensure info is defined and "DHCP Status" exists
+    if (!info || !info["DHCP Status"]) {
+      return false;
+    }
+
+    // Allow editing if DHCP is "Manual"
+    if (info["DHCP Status"] === "Manual") {
+      return true;
+    }
+
+    // Block editing only if the interface name matches enp6s0fX and DHCP is "Enabled"
+    return !(/^enp6s0f\d+$/.test(iface) && info["DHCP Status"] === "Enabled");
   };
 
   const handleInterfaceSelect = (iface) => {
-    if (!isEditable(iface)) {
+    const selected = networkInfo[iface]; // Get the selected interface info
+
+    if (!selected) {
+      alert("Interface data not found.");
+      return;
+    }
+
+    if (!isEditable(iface, selected)) {
       alert("This interface cannot be edited.");
       return;
     }
+
     setSelectedInterface(iface);
     setEditedInterfaceName(iface); // Prepopulate the edited name with the current interface name
-    const selected = networkInfo[iface];
-    if (selected) {
-      setIp(selected["IP Address"] || "");
-      setSubnet(selected["Subnet Mask"] || "");
-      setGateway(selected["Gateway"] || "");
-      setDns(selected["DNS"] || "");
-      setDhcpEnabled(selected["DHCP Status"] === "DHCP" ? "DHCP" : "Manual");
 
-      // If routes exist, parse the first route into its components
-      if (selected["Routes"] && selected["Routes"].length > 0) {
-        const firstRoute = selected["Routes"][0];
-        setRouteMetric(firstRoute.metric || "");
-        setRouteTo(firstRoute.to || "");
-        setRouteVia(firstRoute.via || "");
-      } else {
-        setRouteMetric("");
-        setRouteTo("");
-        setRouteVia("");
-      }
-      // Format the routes into a comma-separated string (ip/subnet format)
-      setRoutes(
-        selected["Routes"]
-          ? selected["Routes"]
-              .filter((route) => route.to !== "default")
-              .map((route) => `${route.metric}, ${route.to}, ${route.via}`)
-              .join(", ")
-          : ""
-      );
+    setIp(selected["IP Address"] || "");
+    setSubnet(selected["Subnet Mask"] || "");
+    setGateway(selected["Gateway"] || "");
+    setDns(selected["DNS"] || "");
+    setDhcpEnabled(selected["DHCP status"] === "DHCP" ? "DHCP" : "Manual");
+
+    // If routes exist, parse the first route into its components
+    if (selected["Routes"] && selected["Routes"].length > 0) {
+      const firstRoute = selected["Routes"][0];
+      setRouteMetric(firstRoute.metric || "");
+      setRouteTo(firstRoute.to || "");
+      setRouteVia(firstRoute.via || "");
+    } else {
+      setRouteMetric("");
+      setRouteTo("");
+      setRouteVia("");
     }
+
+    // Format the routes into a comma-separated string (ip/subnet format)
+    setRoutes(
+      selected["Routes"]
+        ? selected["Routes"]
+            .filter((route) => route.to !== "default")
+            .map((route) => `${route.metric}, ${route.to}, ${route.via}`)
+            .join(", ")
+        : ""
+    );
+
     setIsModalOpen(true); // Open the modal
   };
 
@@ -278,8 +296,6 @@ function Routing() {
 
         <div className="grid grid-cols-7 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
           <div>Interfaces</div>
-          {/* <div>Status</div>
-          <div>Type</div> */}
           <div>IP Address</div>
           <div>Subnet</div>
           <div>To</div>
@@ -292,6 +308,8 @@ function Routing() {
           // Get static routes (excluding "default" routes)
           const staticRoutes =
             info["Routes"]?.filter((route) => route.to !== "default") || [];
+          const editable = isEditable(iface, info);
+          const isDhcpEnabled = info["DHCP Status"] === "DHCP";
 
           return (
             <div
@@ -299,8 +317,6 @@ function Routing() {
               className="grid grid-cols-7 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
             >
               <strong>{iface}</strong>
-              {/* <div>{info.Status}</div>
-              <div>{info["DHCP Status"] || "-"}</div> */}
               <div>{info["IP Address"] || "-"}</div>
               <div>
                 {info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}
@@ -310,38 +326,56 @@ function Routing() {
 
               {/* Edit Button */}
               <div className="flex justify-center">
-                <button
-                  onClick={() => handleInterfaceSelect(iface)}
-                  className={`text-blue-500 hover:text-blue-700 ${
-                    isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
-                  }`}
-                  title={
-                    isEditable(iface)
-                      ? "Edit Routes"
-                      : "Editing disabled for this interface"
-                  }
-                  disabled={!isEditable(iface)}
-                >
-                  <FaEdit />
-                </button>
+                {isDhcpEnabled ? (
+                  <span className="text-gray-500 font-semibold">
+                  <TiCancel
+                    className="text-red-500"
+                    title="DHCP Enabled"
+                  />
+                </span>
+                ) : (
+                  <button
+                    onClick={() => handleInterfaceSelect(iface)}
+                    className={`text-blue-500 hover:text-blue-700 ${
+                      editable ? "" : "opacity-50 cursor-not-allowed"
+                    }`}
+                    title={
+                      editable
+                        ? "Edit Routes"
+                        : "Editing disabled for this interface"
+                    }
+                    disabled={!editable}
+                  >
+                    <FaEdit />
+                  </button>
+                )}
               </div>
 
               {/* Delete Button */}
               <div className="flex justify-center">
-                <button
-                  onClick={() => handleDeleteRoutes(iface)}
-                  className={`text-red-500 hover:text-red-700 ${
-                    isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
-                  }`}
-                  title={
-                    isEditable(iface)
-                      ? "Delete Routes"
-                      : "Deleting disabled for this interface"
-                  }
-                  disabled={!isEditable(iface)}
-                >
-                  <MdDelete />
-                </button>
+                {isDhcpEnabled ? (
+                  <span className="text-gray-500 font-semibold">
+                    <TiCancel
+                      className="text-red-500"
+                      title="DHCP Enabled"
+                    />
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => handleDeleteRoutes(iface)}
+                    className={`text-red-500 hover:text-red-700 ${
+                      editable ? "" : "opacity-50 cursor-not-allowed"
+                    }`}
+                    title={
+                      editable
+                        ? "Delete Routes"
+                        : "Deleting disabled for this interface"
+                    }
+                    disabled={!editable}
+                  >
+                    <MdDelete />
+                  </button>
+                )}
               </div>
             </div>
           );
@@ -370,21 +404,6 @@ function Routing() {
               className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
             />
           </div>
-          {/* DHCP/Manual Selection */}
-          <div className="flex items-center mb-4">
-            <label className="w-1/3 text-left font-bold flex items-center justify-between">
-              <span>DHCP/Manual</span>
-              <span>:</span>
-            </label>
-            <select
-              value={dhcpEnabled}
-              onChange={(e) => setDhcpEnabled(e.target.value)}
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
-            >
-              <option value="DHCP">DHCP</option>
-              <option value="Manual">Manual</option>
-            </select>
-          </div>
           {/* Only show these fields if DHCP is not enabled */}
           {dhcpEnabled === "Manual" && (
             <>
@@ -411,7 +430,7 @@ function Routing() {
                   type="text"
                   value={routeTo}
                   onChange={handleRoute}
-                  placeholder="Enter routes in ip/subnet format, e.g., 192.168.1.0/24"
+                  placeholder="Enter To in ip/subnet format, e.g., 192.168.1.0/24"
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
                 {!isValidRoute && (
@@ -430,15 +449,9 @@ function Routing() {
                   type="text"
                   value={routeVia}
                   onChange={handleViaChange}
-                  placeholder="Enter Gateway"
+                  placeholder="Enter Via"
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
-                {/* show error if via is same as ip*/}
-{/*                 {isViaSameAsIp && (
-                  <span className="text-red-500 text-md ml-2">
-                    Via cannot be same as Interface IP
-                  </span>
-                )} */}
                 {!isViaValid && (
                   <span className="text-red-500 text-md ml-2">
                     Invalid via Address

@@ -207,14 +207,22 @@ def is_gateway_reachable(interface, gateway):
         return False
 
 def is_valid_gateway(interface, ip, subnet, gateway):
-    """Validate if the gateway is within the subnet range and reachable."""
+    """Validate if the gateway is within the subnet range OR is already in routing table."""
     if not gateway:
         return True  # No gateway, no validation needed
+
     try:
+        # Check if gateway is in the subnet
         network = ipaddress.IPv4Network(f"{ip}/{subnet}", strict=False)
-        if ipaddress.IPv4Address(gateway) not in network:
-            return False  # Gateway not in subnet
-        return is_gateway_reachable(interface, gateway)
+        if ipaddress.IPv4Address(gateway) in network:
+            return True  # Gateway is valid in subnet
+        
+        # Check if the gateway is already in the routing table
+        result = subprocess.run(['ip', 'route', 'show'], capture_output=True, text=True)
+        if gateway in result.stdout:
+            return True  # Gateway is already used in routes
+        
+        return False  # Gateway not in subnet and not in route table
     except ValueError:
         return False  # Invalid IP or subnet
    
@@ -296,16 +304,18 @@ def update_network():
                 "message": f"Default Gateway already exists on {existing_iface}. You must delete the existing default Gateway before adding a new one."
             }), 400
 
+        # Validate and process routes
         for route in routes:
             to_network = route.get("to")
             via_gateway = route.get("via", None)
 
-            # If `via_gateway` is not provided, skip this route
+            # Skip if `via_gateway` is not provided
             if not via_gateway:
                 continue  
 
+            # Skip default route handling here (it will be handled separately)
             if to_network == "default":
-                continue  # Skip adding another default route
+                continue  
 
             if not is_valid_ip(via_gateway):
                 return jsonify({'status': 'error', 'message': f'Invalid gateway IP for route {to_network}.'}), 400
@@ -357,8 +367,11 @@ def update_network():
             interface_config['dhcp4'] = False
             interface_config['dhcp6'] = False
             interface_config['addresses'] = [f"{ip}/{cidr}"]
+            # Handle DNS deletion
             if dns_servers:
                 interface_config['nameservers'] = {'addresses': dns_servers}
+            else:
+                interface_config.pop('nameservers', None)  # Remove DNS entry if empty
 
             # Extract existing routes
             existing_routes = interface_config.get('routes', [])
@@ -366,7 +379,6 @@ def update_network():
             default_routes = [route for route in existing_routes if route.get('to') == 'default']
 
             # Remove specific static routes
-            # Remove only the routes that match exactly
             if routes_to_remove:
                 static_routes = [
                     route for route in static_routes
@@ -385,6 +397,10 @@ def update_network():
             updated_static_routes = []
             for route in routes:
                 if 'to' in route and 'via' in route and is_valid_ip(route['via']):
+                    # Prevent static routes from being converted to default routes
+                    if route['to'] == 'default':
+                        continue  # Skip default routes here (handled separately)
+
                     existing_route = next((r for r in static_routes if r['to'] == route['to']), None)
                     route_metric = int(route.get('metric', default_metric))  # Ensure default metric is applied
                     if existing_route:
@@ -396,18 +412,12 @@ def update_network():
             # Merge static routes
             static_routes = updated_static_routes + static_routes  # Keep old ones unless updated
 
-            # Ensure default route is updated correctly
-            if gateway and not remove_default and not routes_to_remove:
-                default_routes = [{'to': 'default', 'via': gateway, 'metric': 100}]
-
-
-
-            # Prevent accidental static route conversion to default
-            if not default_routes and remove_default:
-                default_routes = []  # Ensure it stays empty
+            # Handle default route separately
+            if gateway and any(route.get("to") == "default" for route in routes):
+                default_routes = [{'to': 'default', 'via': gateway, 'metric': default_metric}]
 
             # Apply the changes
-            updated_routes = static_routes + default_routes  # Merge both correctly
+            updated_routes = static_routes + default_routes  # Merge static and default routes
             if updated_routes:
                 interface_config['routes'] = updated_routes
             else:
@@ -417,7 +427,7 @@ def update_network():
         with open(netplan_config_path, 'w') as f:
             yaml.dump(config, f, default_flow_style=False)
 
-         # Apply Netplan changes and handle errors
+        # Apply Netplan changes and handle errors
         generate_output = run_command(['sudo', 'netplan', 'generate'])
         if "error" in generate_output.lower():
             return jsonify({'status': 'error', 'message': f'Netplan generate failed: {generate_output}'}), 500

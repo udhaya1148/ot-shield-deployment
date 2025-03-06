@@ -3,6 +3,8 @@ import SideMenu from "./SideMenu";
 import IPAddress from "./IPAddress";
 import Gateways from "./Gateways";
 import Routing from "./Routing";
+import HostnameDns from "./HostnameDns";
+import HostAddresses from "./HostAddresses";
 
 function NetworkConfiguration() {
   const [activeTab, setActiveTab] = useState("Network Interface");
@@ -21,7 +23,7 @@ function NetworkConfiguration() {
     { name: "Network Interface" },
     { name: "Gateway" },
     { name: "Routing" },
-    { name: "Hostname" },
+    { name: "Hostname and DNS" },
     { name: "Host Address" },
   ];
 
@@ -52,8 +54,8 @@ function NetworkConfiguration() {
           {activeTab === "Network Interface" && <IPAddress />}
           {activeTab === "Gateway" && <Gateways />}
           {activeTab === "Routing" && <Routing />}
-          {activeTab === "Hostname" && <div>Content for Hostname</div>}
-          {activeTab === "Host Address" && <div>Content for Host Address</div>}
+          {activeTab === "Hostname and DNS" && <HostnameDns />}
+          {activeTab === "Host Address" && <HostAddresses />}
         </div>
       </div>
     </div>
