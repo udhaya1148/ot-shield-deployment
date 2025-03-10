@@ -50,12 +50,6 @@ function IPAddress() {
       return;
     }
 
-    // Validate gateway and routes
-    if ((gateway && !routes) || (routes && !gateway)) {
-      alert("Gateway and Routes must be provided together!");
-      return;
-    }
-
     // Validate routes format
     const routePattern =
       /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})(,\s*\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})*$/;
