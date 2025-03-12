@@ -50,27 +50,25 @@ function IPAddress() {
       return;
     }
 
-    // Validate routes format
-    const routePattern =
-      /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})(,\s*\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2})*$/;
-    if (routes && !routePattern.test(routes)) {
-      alert(
-        "Invalid routes format! Ensure each route follows the 'ip/subnet' format, e.g. 192.168.1.0/24"
-      );
-      return;
-    }
-
     const payload = {
       interface: selectedInterface,
-      new_interface_name: editedInterfaceName || selectedInterface, // Include the edited name
+      // new_interface_name: editedInterfaceName || selectedInterface, // Include the edited name
       ip: dhcpEnabled === "DHCP" ? "" : ip,
       subnet: dhcpEnabled === "DHCP" ? "" : subnet,
       gateway: gateway ? gateway : null,
       dns: dns ? dns.split(",").map((d) => d.trim()) : [],
       dhcp: dhcpEnabled === "DHCP",
-      routes: routes ? routes.split(",").map((route) => route.trim()) : [],
+      routes: [],
       metric: metric ? parseInt(metric, 10) : null,
     };
+
+    // If routes are provided, parse them into the correct format
+    if (routes) {
+      payload.routes = routes.split(",").map((route) => {
+        const [to, via] = route.trim().split(" ");
+        return { to, via, metric: payload.metric || 100 };
+      });
+    }
 
     fetch("/api1/update-network", {
       method: "POST",
