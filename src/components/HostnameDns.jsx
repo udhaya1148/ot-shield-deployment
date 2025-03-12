@@ -264,14 +264,13 @@ function HostnameDns() {
             <input
               type="text"
               value={editedInterfaceName}
-              onChange={(e) => setEditedInterfaceName(e.target.value)}
-              placeholder="Enter new interface name"
+              disabled
               className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
             />
           </div>
 
           {/* Only show these fields if DHCP is not enabled */}
-          {dhcpEnabled === "Manual" && (
+          { (
             <>
               <div className="flex items-center mb-4">
                 <label className="w-1/3 text-left font-bold flex items-center justify-between">
