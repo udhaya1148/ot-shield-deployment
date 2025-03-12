@@ -297,20 +297,27 @@ def update_network():
         # Fetch existing routes from all interfaces
         existing_routes = get_existing_routes()
 
-        # Check if a default route exists on any `enp{number}s0` interface and store the matching interface
+        # Check if a default route exists on any interface
         existing_iface = None
 
         for (to_network, via_gateway), iface in existing_routes.items():
-            if to_network == "default" and re.match(r"enp\d+s0", iface):
+            if to_network == "default":
                 existing_iface = iface  # Store the interface name
                 break  # Stop looping once a default gateway is found
 
-        # Only block if a new default gateway is being added
-        if existing_iface and gateway and not routes and not routes_to_remove and not remove_static:
+        # Check if the new route being added is a default route
+        is_adding_default_route = any(route["to"] == "default" for route in routes)
+
+        # Get the interface for which the new route is being added
+        new_iface = request.json.get("interface")  # Assuming the request body contains an 'interface' key
+
+        # Block only if trying to add another default gateway on a different interface
+        if existing_iface and is_adding_default_route and existing_iface != new_iface:
             return jsonify({
                 "status": "error",
-                "message": f"Default Gateway already exists on {existing_iface}. You must delete the existing default Gateway before adding a new one."
+                "message": f"Default Gateway already exists on {existing_iface}. Remove the existing default gateway before adding a new one."
             }), 400
+
 
         # Validate and process routes
         if isinstance(routes, list):
