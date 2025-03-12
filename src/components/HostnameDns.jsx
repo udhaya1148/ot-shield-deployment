@@ -281,7 +281,7 @@ function HostnameDns() {
                   type="text"
                   value={dns}
                   onChange={(e) => setDns(e.target.value)}
-                  placeholder="Enter DNS (optional)"
+                  placeholder="Enter DNS"
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
               </div>
