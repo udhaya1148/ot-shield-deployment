@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { FaEdit, FaTimes } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { TiCancel } from "react-icons/ti";
 
 function Gateways() {
   const [networkInfo, setNetworkInfo] = useState({});
@@ -85,7 +86,7 @@ function Gateways() {
       subnet: dhcpEnabled === "DHCP" ? "" : subnet,
       gateway: gateway ? gateway : null,
       dhcp: dhcpEnabled === "DHCP",
-      routes: [], 
+      routes: [],
       remove_default: removeDefault,
     };
 
@@ -104,7 +105,7 @@ function Gateways() {
         if (data.status === "success") {
           alert("Network updated successfully!");
           fetchNetworkInfo();
-          setIsModalOpen(false); 
+          setIsModalOpen(false);
           setSelectedInterface("");
         } else {
           alert(`Error updating network: ${data.message}`);
@@ -120,20 +121,28 @@ function Gateways() {
   };
 
   const handleInterfaceSelect = (iface) => {
-    if (!isEditable(iface)) {
+    const selected = networkInfo[iface];
+
+    if (!selected) {
+      alert("Interface data not found.");
+      return;
+    }
+
+    if (!isEditable(iface, selected)) {
       alert("This interface cannot be edited.");
       return;
     }
+
     setSelectedInterface(iface);
     setEditedInterfaceName(iface); // Prepopulate the edited name with the current interface name
-    const selected = networkInfo[iface];
+
     if (selected) {
       setIp(selected["IP Address"] || "");
       setSubnet(selected["Subnet Mask"] || "");
       setGateway(selected["Gateway"] || "");
       setDhcpEnabled(selected["DHCP Status"] === "DHCP" ? "DHCP" : "Manual");
     }
-    setIsModalOpen(true); 
+    setIsModalOpen(true);
   };
   // Delete gateway
 
@@ -166,7 +175,7 @@ function Gateways() {
       const data = await response.json();
       if (response.ok) {
         alert("Default route deleted successfully");
-        fetchNetworkInfo(); 
+        fetchNetworkInfo();
       } else {
         alert(`Error: ${data.message}`);
       }
@@ -190,51 +199,70 @@ function Gateways() {
           <div>Delete</div>
         </div>
 
-        {Object.entries(networkInfo).map(([iface, info]) => (
-          <div
-            key={iface}
-            className="grid grid-cols-6 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
-          >
-            <strong>{iface}</strong>
-            <div>{info["IP Address"] || "-"}</div>
-            <div>{info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}</div>
-            <div>{info.Status === "Up" ? info["Gateway"] || "-" : "-"}</div>
+        {Object.entries(networkInfo).map(([iface, info]) => {
+          const editable = isEditable(iface, info);
+          const isDhcpEnabled = info["DHCP Status"] === "DHCP";
 
-            <div className="flex justify-center">
-              <button
-                onClick={() => handleInterfaceSelect(iface)}
-                className={`text-blue-500 hover:text-blue-700 ${
-                  isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
-                }`}
-                title={
-                  isEditable(iface)
-                    ? "Edit Gateway"
-                    : "Editing disabled for this interface"
-                }
-                disabled={!isEditable(iface)}
-              >
-                <FaEdit />
-              </button>
-            </div>
+          return (
+            <div
+              key={iface}
+              className="grid grid-cols-6 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
+            >
+              <strong>{iface}</strong>
+              <div>{info["IP Address"] || "-"}</div>
+              <div>
+                {info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}
+              </div>
+              <div>{info.Status === "Up" ? info["Gateway"] || "-" : "-"}</div>
 
-            <div className="flex justify-center">
-              <button
-                onClick={() => handleDeleteDefaultGateway(iface)}
-                className={`text-red-500 hover:text-red-700 ${
-                  isEditable(iface) ? "" : "opacity-50 cursor-not-allowed"
-                }`}
-                title={
-                  isEditable(iface)
-                    ? "Delete Gateway"
-                    : "Deleting disabled for this interface"
-                }
-                disabled={!isEditable(iface)}
-              >
-                <MdDelete />
-              </button>
+              <div className="flex justify-center">
+                {isDhcpEnabled ? (
+                  <span className="text-gray-500 font-semibold">
+                    <TiCancel className="text-red-500" title="DHCP Enabled" />
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => handleInterfaceSelect(iface)}
+                    className={`text-blue-500 hover:text-blue-700 ${
+                      editable ? "" : "opacity-50 cursor-not-allowed"
+                    }`}
+                    title={
+                      editable
+                        ? "Edit Routes"
+                        : "Editing disabled for this interface"
+                    }
+                    disabled={!editable}
+                  >
+                    <FaEdit />
+                  </button>
+                )}
+              </div>
+              {/* Delete Button */}
+              <div className="flex justify-center">
+                {isDhcpEnabled ? (
+                  <span className="text-gray-500 font-semibold">
+                    <TiCancel className="text-red-500" title="DHCP Enabled" />
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => handleDeleteDefaultGateway(iface)}
+                    className={`text-red-500 hover:text-red-700 ${
+                      editable ? "" : "opacity-50 cursor-not-allowed"
+                    }`}
+                    title={
+                      editable
+                        ? "Delete Routes"
+                        : "Deleting disabled for this interface"
+                    }
+                    disabled={!editable}
+                  >
+                    <MdDelete />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Modal for editing network configuration */}
@@ -255,12 +283,10 @@ function Gateways() {
             <input
               type="text"
               value={editedInterfaceName}
-              onChange={(e) => setEditedInterfaceName(e.target.value)}
-              placeholder="Enter new interface name"
+              disabled
               className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
             />
           </div>
-          {/* DHCP/Manual Selection */}
           {/* Only show these fields if DHCP is not enabled */}
           {dhcpEnabled === "Manual" && (
             <>
