@@ -174,7 +174,7 @@ function Gateways() {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Default route deleted successfully");
+        alert("Default Gateway deleted successfully");
         fetchNetworkInfo();
       } else {
         alert(`Error: ${data.message}`);
