@@ -104,9 +104,8 @@ function Gateways() {
         if (data.status === "success") {
           alert("Network updated successfully!");
           fetchNetworkInfo();
-          setIsModalOpen(false); // Close the modal
+          setIsModalOpen(false); 
           setSelectedInterface("");
-          //          window.location.reload();
         } else {
           alert(`Error updating network: ${data.message}`);
         }
@@ -134,7 +133,7 @@ function Gateways() {
       setGateway(selected["Gateway"] || "");
       setDhcpEnabled(selected["DHCP Status"] === "DHCP" ? "DHCP" : "Manual");
     }
-    setIsModalOpen(true); // Open the modal
+    setIsModalOpen(true); 
   };
   // Delete gateway
 
@@ -167,7 +166,7 @@ function Gateways() {
       const data = await response.json();
       if (response.ok) {
         alert("Default route deleted successfully");
-        fetchNetworkInfo(); // Refresh UI after deletion
+        fetchNetworkInfo(); 
       } else {
         alert(`Error: ${data.message}`);
       }
@@ -184,8 +183,6 @@ function Gateways() {
 
         <div className="grid grid-cols-6 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
           <div>Interfaces</div>
-          {/* <div>Status</div>
-          <div>Type</div> */}
           <div>IP Address</div>
           <div>Subnet</div>
           <div>Gateway</div>
@@ -199,8 +196,6 @@ function Gateways() {
             className="grid grid-cols-6 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
           >
             <strong>{iface}</strong>
-            {/* <div>{info.Status}</div>
-            <div>{info["DHCP Status"] || "-"}</div> */}
             <div>{info["IP Address"] || "-"}</div>
             <div>{info.Status === "Up" ? info["Subnet Mask"] || "-" : "-"}</div>
             <div>{info.Status === "Up" ? info["Gateway"] || "-" : "-"}</div>
@@ -266,33 +261,19 @@ function Gateways() {
             />
           </div>
           {/* DHCP/Manual Selection */}
-          <div className="flex items-center mb-4">
-            <label className="w-1/3 text-left font-bold flex items-center justify-between">
-              <span>DHCP/Manual</span>
-              <span>:</span>
-            </label>
-            <select
-              value={dhcpEnabled}
-              onChange={(e) => setDhcpEnabled(e.target.value)}
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
-            >
-              <option value="DHCP">DHCP</option>
-              <option value="Manual">Manual</option>
-            </select>
-          </div>
           {/* Only show these fields if DHCP is not enabled */}
           {dhcpEnabled === "Manual" && (
             <>
               <div className="flex items-center mb-4">
                 <label className="w-1/3 text-left font-bold flex items-center justify-between">
-                  <span>Gateway</span>
+                  <span>Default Gateway</span>
                   <span>: </span>
                 </label>
                 <input
                   type="text"
                   value={gateway}
                   onChange={handleGatewayChange}
-                  placeholder="Enter Gateway"
+                  placeholder="Enter Default Gateway"
                   className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
                 />
                 {isGatewaySameAsIp && (
