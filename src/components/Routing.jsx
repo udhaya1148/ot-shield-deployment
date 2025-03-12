@@ -138,7 +138,7 @@ function Routing() {
         : [];
 
     // Combine preserved routes and new routes
-    const finalRoutes = [...filteredExistingRoutes, ...addedRoutes]; // <-- Now finalRoutes is defined
+    const finalRoutes = [...filteredExistingRoutes, ...addedRoutes];
 
     // Check if changes are actually made
     const existingConfig = networkInfo[selectedInterface];
