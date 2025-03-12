@@ -251,11 +251,6 @@ function Routing() {
       return;
     }
 
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete the Route for ${iface}?`
-    );
-    if (!confirmDelete) return;
-
     const selected = networkInfo[iface];
 
     // Ensure we send IP and Subnet if DHCP is disabled
@@ -399,8 +394,7 @@ function Routing() {
             <input
               type="text"
               value={editedInterfaceName}
-              onChange={(e) => setEditedInterfaceName(e.target.value)}
-              placeholder="Enter new interface name"
+              disabled
               className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
             />
           </div>
