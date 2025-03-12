@@ -278,12 +278,20 @@ def update_network():
     dhcp_enabled = data.get('dhcp', None)
     default_metric = data.get('metric', 100)  
 
+    # Ensure routes is a list of dictionaries
+    if isinstance(routes, str):
+        routes = [routes] if routes else []
+    elif isinstance(routes, list):
+        routes = [route if isinstance(route, dict) else {} for route in routes]
+    else:
+        routes = []
+
     try:
         if not interface:
             return jsonify({'status': 'error', 'message': 'Interface is required.'}), 400
         if not dhcp_enabled and (not ip or not subnet):
             return jsonify({'status': 'error', 'message': 'IP address and subnet are required when DHCP is disabled.'}), 400
-        if gateway and not is_valid_gateway(interface, ip, subnet, gateway):
+        if not dhcp_enabled and gateway and not is_valid_gateway(interface, ip, subnet, gateway):
             return jsonify({'status': 'error', 'message': 'Invalid or unreachable gateway.'}), 400
 
         # Fetch existing routes from all interfaces
@@ -305,36 +313,37 @@ def update_network():
             }), 400
 
         # Validate and process routes
-        for route in routes:
-            to_network = route.get("to")
-            via_gateway = route.get("via", None)
+        if isinstance(routes, list):
+            for route in routes:
+                to_network = route.get("to")
+                via_gateway = route.get("via", None)
 
-            # Skip if `via_gateway` is not provided
-            if not via_gateway:
-                continue  
+                # Skip if `via_gateway` is not provided
+                if not via_gateway:
+                    continue  
 
-            # Skip default route handling here (it will be handled separately)
-            if to_network == "default":
-                continue  
+                # Skip default route handling here (it will be handled separately)
+                if to_network == "default":
+                    continue  
 
-            if not is_valid_ip(via_gateway):
-                return jsonify({'status': 'error', 'message': f'Invalid gateway IP for route {to_network}.'}), 400
+                if not is_valid_ip(via_gateway):
+                    return jsonify({'status': 'error', 'message': f'Invalid gateway IP for route {to_network}.'}), 400
 
-            # Check if route already exists on another interface with the same gateway
-            existing_route = existing_routes.get((to_network, via_gateway))
+                # Check if route already exists on another interface with the same gateway
+                existing_route = existing_routes.get((to_network, via_gateway))
 
-            if existing_route:
-                if existing_route != interface:
-                    return jsonify({
-                        "status": "error",
-                        "message": f"Route {to_network} via {via_gateway} already exists on interface {existing_route}."
-                    }), 400
+                if existing_route:
+                    if existing_route != interface:
+                        return jsonify({
+                            "status": "error",
+                            "message": f"Route {to_network} via {via_gateway} already exists on interface {existing_route}."
+                        }), 400
 
-            # Skip gateway validation if route already exists
-            # Ensure the gateway is reachable and within subnet only if the route is new
-            if not existing_route and not is_valid_gateway(interface, ip, subnet, via_gateway):
-                return jsonify({'status': 'error', 'message': f'Invalid or unreachable gateway for route {to_network}.'}), 400
-
+                # Skip gateway validation if route already exists
+                # Ensure the gateway is reachable and within subnet only if the route is new
+                if not existing_route and not is_valid_gateway(interface, ip, subnet, via_gateway):
+                    return jsonify({'status': 'error', 'message': f'Invalid or unreachable gateway for route {to_network}.'}), 400
+            
         netplan_config_path = f'/etc/netplan/{interface}.yaml'
 
         # Read existing netplan config
@@ -351,9 +360,12 @@ def update_network():
         if dhcp_enabled:
             interface_config['dhcp4'] = True
             interface_config['dhcp6'] = True
+
+            # Remove addresses, nameservers, and routes when switching to DHCP
             interface_config.pop('addresses', None)
             interface_config.pop('nameservers', None)
-            interface_config.pop('routes', None)
+            interface_config.pop('routes', None)  
+
         else:
             if '/' in subnet:
                 cidr = subnet.split('/')[1]
@@ -555,7 +567,7 @@ if __name__ == "__main__":
 
     subprocess.run([
         'gunicorn',
-        '-w', '1',          # Number of worker processes
-        '-b', '0.0.0.0:5051', # Bind to 0.0.0.0:5001
-        app_module           # Pass the module name dynamically
+        '-w', '1',          
+        '-b', '0.0.0.0:5051', 
+        app_module 
     ])
