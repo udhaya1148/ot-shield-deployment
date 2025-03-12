@@ -186,8 +186,7 @@ function IPAddress() {
             <input
               type="text"
               value={editedInterfaceName}
-              onChange={(e) => setEditedInterfaceName(e.target.value)}
-              placeholder="Enter new interface name"
+              disabled
               className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
             />
           </div>
