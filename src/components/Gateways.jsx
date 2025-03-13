@@ -249,7 +249,7 @@ function Gateways() {
                   <button
                     onClick={() => handleDeleteDefaultGateway(iface)}
                     className="text-red-500 hover:text-red-700"
-                    title="Delete Routes"
+                    title="Delete Default Gateway"
                   >
                     <MdDelete />
                   </button>
