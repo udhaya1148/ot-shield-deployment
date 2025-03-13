@@ -216,7 +216,7 @@ function HostnameDns() {
                     }`}
                     title={
                       editable
-                        ? "Edit Routes"
+                        ? "Edit DNS"
                         : "Editing disabled for this interface"
                     }
                     disabled={!editable}
@@ -234,7 +234,7 @@ function HostnameDns() {
                     }`}
                     title={
                       editable
-                        ? "Delete Routes"
+                        ? "Delete DNS"
                         : "Deleting disabled for this interface"
                     }
                     disabled={!editable}
