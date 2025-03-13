@@ -295,9 +295,9 @@ function HostnameDns() {
 
       {/* Hostname Configuration Table */}
       <div className="border border-black p-6 bg-white rounded-lg shadow-lg">
-        <h3 className="text-3xl text-blue-600 font-bold">Configure Hostname</h3>
+        <h3 className="text-3xl text-blue-600 font-bold">Chnage Hostname</h3>
         <div className="grid grid-cols-2 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
-          <div>Change Hostname</div>
+          <div>Current Hostname</div>
           <div>New Hostname</div>
         </div>
         <div className="grid grid-cols-2 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg">
