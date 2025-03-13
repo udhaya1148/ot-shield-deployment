@@ -367,7 +367,7 @@ def update_network():
         if dhcp_enabled:
             interface_config['dhcp4'] = True
             interface_config['dhcp6'] = True
-
+            interface_config['optional'] = True
             # Remove addresses, nameservers, and routes when switching to DHCP
             interface_config.pop('addresses', None)
             interface_config.pop('nameservers', None)
@@ -386,6 +386,7 @@ def update_network():
             interface_config['dhcp4'] = False
             interface_config['dhcp6'] = False
             interface_config['addresses'] = [f"{ip}/{cidr}"]
+            interface_config['optional'] = True
             # Handle DNS deletion
             if dns_servers:
                 interface_config['nameservers'] = {'addresses': dns_servers}
