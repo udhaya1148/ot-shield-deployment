@@ -32,8 +32,8 @@ if __name__ == "__main__":
 
     subprocess.run([
         'gunicorn',
-        '-w', '1',          # Number of worker processes
-        '-b', '0.0.0.0:5055', # Bind to 0.0.0.0:5005
-        '--timeout', '30',    # Set timeout (seconds)
-        app_module           # Pass the module name dynamically
+        '-w', '1',          
+        '-b', '0.0.0.0:5055', 
+        '--timeout', '30',    
+        app_module           
     ])
