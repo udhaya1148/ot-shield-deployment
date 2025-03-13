@@ -215,49 +215,51 @@ function Gateways() {
               </div>
               <div>{info.Status === "Up" ? info["Gateway"] || "-" : "-"}</div>
 
+              {/* Edit Button */}
               <div className="flex justify-center">
                 {isDhcpEnabled ? (
                   <span className="text-gray-500 font-semibold">
                     <TiCancel className="text-red-500" title="DHCP Enabled" />
                   </span>
-                ) : (
+                ) : editable ? (
                   <button
                     onClick={() => handleInterfaceSelect(iface)}
-                    className={`text-blue-500 hover:text-blue-700 ${
-                      editable ? "" : "opacity-50 cursor-not-allowed"
-                    }`}
-                    title={
-                      editable
-                        ? "Edit Routes"
-                        : "Editing disabled for this interface"
-                    }
-                    disabled={!editable}
+                    className="text-blue-500 hover:text-blue-700"
+                    title="Edit Routes"
                   >
                     <FaEdit />
                   </button>
+                ) : (
+                  <span className="text-gray-500 font-semibold">
+                    <TiCancel
+                      className="text-red-500"
+                      title="Editing disabled for this interface"
+                    />
+                  </span>
                 )}
               </div>
+
               {/* Delete Button */}
               <div className="flex justify-center">
                 {isDhcpEnabled ? (
                   <span className="text-gray-500 font-semibold">
                     <TiCancel className="text-red-500" title="DHCP Enabled" />
                   </span>
-                ) : (
+                ) : editable ? (
                   <button
                     onClick={() => handleDeleteDefaultGateway(iface)}
-                    className={`text-red-500 hover:text-red-700 ${
-                      editable ? "" : "opacity-50 cursor-not-allowed"
-                    }`}
-                    title={
-                      editable
-                        ? "Delete Routes"
-                        : "Deleting disabled for this interface"
-                    }
-                    disabled={!editable}
+                    className="text-red-500 hover:text-red-700"
+                    title="Delete Routes"
                   >
                     <MdDelete />
                   </button>
+                ) : (
+                  <span className="text-gray-500 font-semibold">
+                    <TiCancel
+                      className="text-red-500"
+                      title="Deleting disabled for this interface"
+                    />
+                  </span>
                 )}
               </div>
             </div>
