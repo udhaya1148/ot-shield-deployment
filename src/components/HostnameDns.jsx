@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { FaEdit, FaTimes } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { TiCancel } from "react-icons/ti";
 
 function HostnameDns() {
   const [networkInfo, setNetworkInfo] = useState({});
@@ -110,19 +111,10 @@ function HostnameDns() {
       .catch((error) => console.error("Error updating network:", error));
   };
 
-  const isEditable = (iface, info) => {
-    // Ensure info is defined and "DHCP Status" exists
-    if (!info || !info["DHCP Status"]) {
-      return false;
-    }
-
-    // Allow editing if DHCP is "Manual"
-    if (info["DHCP Status"] === "Manual") {
-      return true;
-    }
-
-    // Block editing only if the interface name matches enp6s0fX and DHCP is "Enabled"
-    return !(/^enp6s0f\d+$/.test(iface) && info["DHCP Status"] === "Enabled");
+  // Function to check if an interface is editable (blocking enp6s0f0 and similar names)
+  const isEditable = (iface) => {
+    // Block editing if the interface name matches enp6s0f0 pattern
+    return !/^enp6s0f\d+$/.test(iface);
   };
 
   const handleInterfaceSelect = (iface) => {
@@ -208,39 +200,44 @@ function HostnameDns() {
             >
               <strong>{iface}</strong>
               <div>{info["DNS"] || "-"}</div>
+              {/* Edit Button */}
               <div className="flex justify-center">
+                { editable ? (
                   <button
                     onClick={() => handleInterfaceSelect(iface)}
-                    className={`text-blue-500 hover:text-blue-700 ${
-                      editable ? "" : "opacity-50 cursor-not-allowed"
-                    }`}
-                    title={
-                      editable
-                        ? "Edit DNS"
-                        : "Editing disabled for this interface"
-                    }
-                    disabled={!editable}
+                    className="text-blue-500 hover:text-blue-700"
+                    title="Edit Routes"
                   >
                     <FaEdit />
                   </button>
+                ) : (
+                  <span className="text-gray-500 font-semibold">
+                    <TiCancel
+                      className="text-red-500"
+                      title="Editing disabled for this interface"
+                    />
+                  </span>
+                )}
               </div>
 
               {/* Delete Button */}
               <div className="flex justify-center">
+                { editable ? (
                   <button
                     onClick={() => handleDeleteDns(iface)}
-                    className={`text-red-500 hover:text-red-700 ${
-                      editable ? "" : "opacity-50 cursor-not-allowed"
-                    }`}
-                    title={
-                      editable
-                        ? "Delete DNS"
-                        : "Deleting disabled for this interface"
-                    }
-                    disabled={!editable}
+                    className="text-red-500 hover:text-red-700"
+                    title="Delete Routes"
                   >
                     <MdDelete />
                   </button>
+                ) : (
+                  <span className="text-gray-500 font-semibold">
+                    <TiCancel
+                      className="text-red-500"
+                      title="Deleting disabled for this interface"
+                    />
+                  </span>
+                )}
               </div>
             </div>
           );
