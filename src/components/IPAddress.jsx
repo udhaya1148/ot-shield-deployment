@@ -127,11 +127,11 @@ function IPAddress() {
 
   return (
     <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
-      <div className="border border-black mb-2 p-6 bg-white rounded-lg shadow-lg">
+      <div className="mb-2 p-6 bg-white rounded-lg shadow-lg">
         <h3 className="text-3xl text-blue-600 font-bold">
           Configure IP Address
         </h3>
-        <div className="grid grid-cols-6 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
+        <div className="grid grid-cols-6 bg-gray-200 p-3 mt-2 font-bold text-center rounded-lg">
           <div>Interfaces</div>
           <div>Status</div>
           <div>Type</div>
@@ -143,7 +143,7 @@ function IPAddress() {
         {Object.entries(networkInfo).map(([iface, info]) => (
           <div
             key={iface}
-            className="grid grid-cols-6 mt-2 items-center text-center border border-black bg-gray-100 p-2 mb-2 rounded-lg"
+            className="grid grid-cols-6 mt-2 items-center text-center bg-gray-100 p-2 mb-2 rounded-lg"
           >
             <strong className="flex-1">{iface}</strong>
             <div className="flex-1">{info.Status}</div>
@@ -187,7 +187,7 @@ function IPAddress() {
               type="text"
               value={editedInterfaceName}
               disabled
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1  rounded-md"
             />
           </div>
           {/* DHCP/Manual Selection */}
@@ -199,7 +199,7 @@ function IPAddress() {
             <select
               value={dhcpEnabled}
               onChange={(e) => setDhcpEnabled(e.target.value)}
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1  rounded-md"
             >
               <option value="DHCP">DHCP</option>
               <option value="Manual">Manual</option>
@@ -218,7 +218,7 @@ function IPAddress() {
                   value={ip}
                   onChange={(e) => setIp(e.target.value)}
                   placeholder="Enter IP Address"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1  rounded-md"
                 />
               </div>
 
@@ -232,7 +232,7 @@ function IPAddress() {
                   value={subnet}
                   onChange={(e) => setSubnet(e.target.value)}
                   placeholder="Enter Subnet Mask or CIDR"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1  rounded-md"
                 />
               </div>
             </>
