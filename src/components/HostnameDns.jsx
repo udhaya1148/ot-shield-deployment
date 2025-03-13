@@ -206,7 +206,7 @@ function HostnameDns() {
                   <button
                     onClick={() => handleInterfaceSelect(iface)}
                     className="text-blue-500 hover:text-blue-700"
-                    title="Edit Routes"
+                    title="Edit DNS"
                   >
                     <FaEdit />
                   </button>
@@ -226,7 +226,7 @@ function HostnameDns() {
                   <button
                     onClick={() => handleDeleteDns(iface)}
                     className="text-red-500 hover:text-red-700"
-                    title="Delete Routes"
+                    title="Delete DNS"
                   >
                     <MdDelete />
                   </button>
