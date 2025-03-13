@@ -181,9 +181,9 @@ function HostnameDns() {
 
   return (
     <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
-      <div className="border border-black mb-2 p-6 bg-white rounded-lg shadow-lg">
+      <div className="mb-2 p-6 bg-white rounded-lg shadow-lg">
         <h3 className="text-3xl text-blue-600 font-bold">Configure DNS</h3>
-        <div className="grid grid-cols-4 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
+        <div className="grid grid-cols-4 bg-gray-200 p-3 mt-2 font-bold text-center rounded-lg">
           <div>Interfaces</div>
           <div>DNS</div>
           <div>Edit</div>
@@ -196,7 +196,7 @@ function HostnameDns() {
           return (
             <div
               key={iface}
-              className="grid grid-cols-4 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
+              className="grid grid-cols-4 items-center text-center bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
             >
               <strong>{iface}</strong>
               <div>{info["DNS"] || "-"}</div>
@@ -245,7 +245,7 @@ function HostnameDns() {
       </div>
       {/* Modal for editing network configuration */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="border border-gray-500 p-6 relative">
+        <div className="bg-gray-100 p-6 relative">
           <button
             onClick={() => setIsModalOpen(false)}
             className="absolute top-2 right-2 text-xl text-gray-600 hover:text-gray-900"
@@ -262,7 +262,7 @@ function HostnameDns() {
               type="text"
               value={editedInterfaceName}
               disabled
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
             />
           </div>
 
@@ -279,7 +279,7 @@ function HostnameDns() {
                   value={dns}
                   onChange={(e) => setDns(e.target.value)}
                   placeholder="Enter DNS"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
                 />
               </div>
             </>
@@ -294,13 +294,13 @@ function HostnameDns() {
       </Modal>
 
       {/* Hostname Configuration Table */}
-      <div className="border border-black p-6 bg-white rounded-lg shadow-lg">
+      <div className="p-6 bg-white rounded-lg shadow-lg">
         <h3 className="text-3xl text-blue-600 font-bold">Chnage Hostname</h3>
-        <div className="grid grid-cols-2 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
+        <div className="grid grid-cols-2 bg-gray-200 p-3 mt-2 font-bold text-center rounded-lg">
           <div>Current Hostname</div>
           <div>New Hostname</div>
         </div>
-        <div className="grid grid-cols-2 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg">
+        <div className="grid grid-cols-2 items-center text-center bg-gray-100 p-2 mb-2 mt-2 rounded-lg">
           <strong>{hostname || "-"}</strong>
           <div className="flex items-center justify-center">
             <input
@@ -308,7 +308,7 @@ function HostnameDns() {
               value={newHostname}
               onChange={(e) => setNewHostname(e.target.value)}
               placeholder="Enter new hostname"
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
             />
             <button
               onClick={handleUpdateHostname}
