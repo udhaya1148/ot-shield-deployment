@@ -225,7 +225,7 @@ function Gateways() {
                   <button
                     onClick={() => handleInterfaceSelect(iface)}
                     className="text-blue-500 hover:text-blue-700"
-                    title="Edit Routes"
+                    title="Edit Default Gateway"
                   >
                     <FaEdit />
                   </button>
