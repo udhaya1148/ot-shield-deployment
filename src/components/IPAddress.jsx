@@ -143,7 +143,7 @@ function IPAddress() {
         {Object.entries(networkInfo).map(([iface, info]) => (
           <div
             key={iface}
-            className="grid grid-cols-6 items-center text-center border border-black bg-gray-100 p-2 mb-2 rounded-lg"
+            className="grid grid-cols-6 mt-2 items-center text-center border border-black bg-gray-100 p-2 mb-2 rounded-lg"
           >
             <strong className="flex-1">{iface}</strong>
             <div className="flex-1">{info.Status}</div>
