@@ -277,10 +277,10 @@ function Routing() {
 
   return (
     <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
-      <div className="border border-black mb-2 p-6 bg-white rounded-lg shadow-lg">
+      <div className="mb-2 p-6 bg-white rounded-lg shadow-lg">
         <h3 className="text-3xl text-blue-600 font-bold">Configure Routes</h3>
 
-        <div className="grid grid-cols-7 bg-gray-200 p-3 mt-2 font-bold text-center border-b border-black rounded-lg">
+        <div className="grid grid-cols-7 bg-gray-200 p-3 mt-2 font-bold text-center rounded-lg">
           <div>Interfaces</div>
           <div>IP Address</div>
           <div>Subnet</div>
@@ -300,7 +300,7 @@ function Routing() {
           return (
             <div
               key={iface}
-              className="grid grid-cols-7 items-center text-center border border-black bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
+              className="grid grid-cols-7 items-center text-center bg-gray-100 p-2 mb-2 mt-2 rounded-lg"
             >
               <strong>{iface}</strong>
               <div>{info["IP Address"] || "-"}</div>
@@ -380,7 +380,7 @@ function Routing() {
               type="text"
               value={editedInterfaceName}
               disabled
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
             />
           </div>
           {/* Only show these fields if DHCP is not enabled */}
@@ -396,7 +396,7 @@ function Routing() {
                   value={routeMetric}
                   onChange={(e) => setRouteMetric(e.target.value)}
                   placeholder="Enter metric"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
                 />
               </div>
 
@@ -410,7 +410,7 @@ function Routing() {
                   value={routeTo}
                   onChange={handleRoute}
                   placeholder="Enter To in ip/subnet format, e.g., 192.168.1.0/24"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
                 />
                 {!isValidRoute && (
                   <span className="text-red-500 text-md ml-2">
@@ -429,7 +429,7 @@ function Routing() {
                   value={routeVia}
                   onChange={handleViaChange}
                   placeholder="Enter Via"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 border border-black rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
                 />
                 {!isViaValid && (
                   <span className="text-red-500 text-md ml-2">
