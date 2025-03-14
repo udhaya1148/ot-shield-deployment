@@ -18,9 +18,9 @@ function MainDashboard() {
   ];
 
   const panelSizes = {
-    9: { width: 400, height: 300 }, // Increased size
-    8: { width: 219, height: 104 },
-    10: { width: 157, height: 110 },
+    9: { width: 1200, height: 900 }, // Increased size
+    8: { width: 900, height: 900 },
+    10: { width: 500, height: 400 },
     11: { width: 163, height: 104 },
     12: { width: 162, height: 105 },
     13: { width: 400, height: 300 }, // Increased size
@@ -64,43 +64,53 @@ function MainDashboard() {
   // Custom panel positions using grid-row and grid-column
   const panelPositions = {
     9: { gridColumn: "1", gridRow: "1" },
+
     13: { gridColumn: "2", gridRow: "1" },
-    14: { gridColumn: "3 / span 2", gridRow: "1" },
-    8: { gridColumn: "1", gridRow: "2" },
-    10: { gridColumn: "2", gridRow: "2" },
-    11: { gridColumn: "3", gridRow: "2" },
-    12: { gridColumn: "4", gridRow: "2" },
-    21: { gridColumn: "1", gridRow: "3" },
-    23: { gridColumn: "2", gridRow: "3" },
-    22: { gridColumn: "1", gridRow: "4" },
-    24: { gridColumn: "2", gridRow: "4" },
-    1: { gridColumn: "1", gridRow: "5" },
-    3: { gridColumn: "2", gridRow: "5" },
-    4: { gridColumn: "3", gridRow: "5" },
-    5: { gridColumn: "4", gridRow: "5" },
-    6: { gridColumn: "5", gridRow: "5" },
-    20: { gridColumn: "1", gridRow: "6" },
-    25: { gridColumn: "2", gridRow: "6" },
-    26: { gridColumn: "3", gridRow: "6" },
-    27: { gridColumn: "4", gridRow: "6" },
-    28: { gridColumn: "5", gridRow: "6" },
-    15: { gridColumn: "1", gridRow: "7" },
-    16: { gridColumn: "2", gridRow: "7" },
-    17: { gridColumn: "3", gridRow: "7" },
-    18: { gridColumn: "4", gridRow: "7" },
-    19: { gridColumn: "5", gridRow: "7" },
-    31: { gridColumn: "1", gridRow: "8" },
-    32: { gridColumn: "2", gridRow: "8" },
-    34: { gridColumn: "3", gridRow: "8" },
-    36: { gridColumn: "4", gridRow: "8" },
-    38: { gridColumn: "5", gridRow: "8" },
-    33: { gridColumn: "1", gridRow: "9" },
-    35: { gridColumn: "2", gridRow: "9" },
-    37: { gridColumn: "3", gridRow: "9" },
-    39: { gridColumn: "4", gridRow: "9" },
-    40: { gridColumn: "5", gridRow: "9" },
-    30: { gridColumn: "1 / span 3", gridRow: "10" },
-    41: { gridColumn: "4 / span 2", gridRow: "10" },
+
+    14: { gridColumn: "2 / span 3", gridRow: "2" },
+
+    8: { gridColumn: "1", gridRow: "3" },
+    10: { gridColumn: "2", gridRow: "3" },
+    11: { gridColumn: "3", gridRow: "3" },
+    12: { gridColumn: "4", gridRow: "3" },
+
+    21: { gridColumn: "1 /span 2", gridRow: "4" },
+    23: { gridColumn: "3 /span 2 ", gridRow: "4" },
+    22: { gridColumn: "1 / span 2", gridRow: "5" },
+    24: { gridColumn: "3 /span 2", gridRow: "5" },
+
+    1: { gridColumn: "1", gridRow: "6" },
+    3: { gridColumn: "2", gridRow: "6" },
+    4: { gridColumn: "3", gridRow: "6" },
+    5: { gridColumn: "4", gridRow: "6" },
+    6: { gridColumn: "5", gridRow: "6" },
+
+    20: { gridColumn: "1", gridRow: "7" },
+    25: { gridColumn: "2", gridRow: "7" },
+    26: { gridColumn: "3", gridRow: "7" },
+    27: { gridColumn: "4", gridRow: "7" },
+    28: { gridColumn: "5", gridRow: "7" },
+
+    15: { gridColumn: "1", gridRow: "8" },
+    16: { gridColumn: "2", gridRow: "8" },
+    17: { gridColumn: "3", gridRow: "8" },
+    18: { gridColumn: "4", gridRow: "8" },
+    19: { gridColumn: "5", gridRow: "8" },
+
+    31: { gridColumn: "1", gridRow: "9" },
+    32: { gridColumn: "2", gridRow: "9" },
+    34: { gridColumn: "3", gridRow: "9" },
+    36: { gridColumn: "4", gridRow: "9" },
+    38: { gridColumn: "5", gridRow: "9" },
+
+    33: { gridColumn: "1", gridRow: "10" },
+    35: { gridColumn: "2", gridRow: "10" },
+    37: { gridColumn: "3", gridRow: "10" },
+    39: { gridColumn: "4", gridRow: "10" },
+    40: { gridColumn: "5", gridRow: "10" },
+
+    30: { gridColumn: "1 / span 3", gridRow: "11" },
+    41: { gridColumn: "4 / span 2", gridRow: "11" },
   };
 
   const dashboardUrl = `http://${window.location.hostname}:3000/d-solo/de72jamksx14wa/network?orgId=1&timezone=Asia%2FKolkata&refresh=auto&theme=light`;
