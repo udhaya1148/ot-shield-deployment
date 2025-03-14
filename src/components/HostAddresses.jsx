@@ -56,9 +56,9 @@ const HostAddresses = () => {
       <table className="w-full border-separate border-spacing-y-2">
         <thead>
           <tr className="bg-gray-200">
-            <th className="px-4 py-2">IP Address</th>
+            <th className="px-4 py-2 rounded-lg">IP Address</th>
             {/* <th className="border border-black px-4 py-2">Enabled?</th> */}
-            <th className="px-4 py-2">Hostnames</th>
+            <th className="px-4 py-2 rounded-lg">Hostnames</th>
             {/* <th className="border border-black px-4 py-2">Delete</th> */}
           </tr>
         </thead>
@@ -66,8 +66,8 @@ const HostAddresses = () => {
         <tbody>
           {hosts.map((host, index) => (
             <tr key={index} className="text-center">
-              <td className="bg-gray-100 px-4 py-2">{host.ip}</td>
-              <td className="bg-gray-100 px-4 py-2">{host.hostnames}</td>
+              <td className="bg-gray-100 px-4 py-2 rounded-lg">{host.ip}</td>
+              <td className="bg-gray-100 px-4 py-2 rounded-lg">{host.hostnames}</td>
             </tr>
           ))}
         </tbody>
