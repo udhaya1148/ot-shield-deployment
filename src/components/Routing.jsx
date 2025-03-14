@@ -363,7 +363,7 @@ function Routing() {
       </div>
       {/* Modal for editing network configuration */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="border border-gray-500 p-6 relative">
+        <div className="bg-gray-100 p-6 relative">
           <button
             onClick={() => setIsModalOpen(false)}
             className="absolute top-2 right-2 text-xl text-gray-600 hover:text-gray-900"
@@ -380,7 +380,7 @@ function Routing() {
               type="text"
               value={editedInterfaceName}
               disabled
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-md"
             />
           </div>
           {/* Only show these fields if DHCP is not enabled */}
@@ -396,7 +396,7 @@ function Routing() {
                   value={routeMetric}
                   onChange={(e) => setRouteMetric(e.target.value)}
                   placeholder="Enter metric"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-md"
                 />
               </div>
 
@@ -410,7 +410,7 @@ function Routing() {
                   value={routeTo}
                   onChange={handleRoute}
                   placeholder="Enter To in ip/subnet format, e.g., 192.168.1.0/24"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-md"
                 />
                 {!isValidRoute && (
                   <span className="text-red-500 text-md ml-2">
@@ -429,7 +429,7 @@ function Routing() {
                   value={routeVia}
                   onChange={handleViaChange}
                   placeholder="Enter Via"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-md"
                 />
                 {!isViaValid && (
                   <span className="text-red-500 text-md ml-2">
