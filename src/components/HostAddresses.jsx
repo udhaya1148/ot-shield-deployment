@@ -83,7 +83,7 @@ const HostAddresses = () => {
             placeholder="IP Address"
             value={newHost.ip}
             onChange={(e) => setNewHost({ ...newHost, ip: e.target.value })}
-            className="bg-gray-300 px-3 py-2 rounded w-1/3"
+            className="bg-gray-300 px-3 py-2 rounded-lg w-1/3"
           />
           <input
             type="text"
@@ -92,11 +92,11 @@ const HostAddresses = () => {
             onChange={(e) =>
               setNewHost({ ...newHost, hostnames: e.target.value })
             }
-            className="bg-gray-300 px-3 py-2 rounded w-1/2"
+            className="bg-gray-300 px-3 py-2 rounded-lg w-1/2"
           />
           <button
             onClick={addHost}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 "
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 "
           >
             Add
           </button>
