@@ -262,7 +262,7 @@ function HostnameDns() {
               type="text"
               value={editedInterfaceName}
               disabled
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-md"
             />
           </div>
 
@@ -279,7 +279,7 @@ function HostnameDns() {
                   value={dns}
                   onChange={(e) => setDns(e.target.value)}
                   placeholder="Enter DNS"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-md"
                 />
               </div>
             </>
@@ -308,7 +308,7 @@ function HostnameDns() {
               value={newHostname}
               onChange={(e) => setNewHostname(e.target.value)}
               placeholder="Enter new hostname"
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1 rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-md"
             />
             <button
               onClick={handleUpdateHostname}
