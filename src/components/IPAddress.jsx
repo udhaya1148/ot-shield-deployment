@@ -187,7 +187,7 @@ function IPAddress() {
               type="text"
               value={editedInterfaceName}
               disabled
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1  rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1  rounded-md"
             />
           </div>
           {/* DHCP/Manual Selection */}
@@ -199,7 +199,7 @@ function IPAddress() {
             <select
               value={dhcpEnabled}
               onChange={(e) => setDhcpEnabled(e.target.value)}
-              className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1  rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1  rounded-md"
             >
               <option value="DHCP">DHCP</option>
               <option value="Manual">Manual</option>
@@ -218,7 +218,7 @@ function IPAddress() {
                   value={ip}
                   onChange={(e) => setIp(e.target.value)}
                   placeholder="Enter IP Address"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1  rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1  rounded-md"
                 />
               </div>
 
@@ -232,7 +232,7 @@ function IPAddress() {
                   value={subnet}
                   onChange={(e) => setSubnet(e.target.value)}
                   placeholder="Enter Subnet Mask or CIDR"
-                  className="h-[1.5rem] w-[16rem] bg-gray-200 outline-none px-4 ml-1  rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1  rounded-md"
                 />
               </div>
             </>
