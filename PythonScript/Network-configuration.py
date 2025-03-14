@@ -315,7 +315,8 @@ def update_network():
         if existing_iface and is_adding_default_route and existing_iface != new_iface:
             return jsonify({
                 "status": "error",
-                "message": f"Default Gateway already exists on {existing_iface}. Remove the existing default gateway before adding a new one."
+                "message": f"Default Gateway already exists."
+                # "message": f"Default Gateway already exists on {existing_iface}. Remove the existing default gateway before adding a new one."
             }), 400
 
 
