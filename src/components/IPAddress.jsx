@@ -170,7 +170,7 @@ function IPAddress() {
 
       {/* Modal for editing network configuration */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="border border-gray-500 p-6 relative">
+        <div className="bg-gray-100 p-6 relative">
           <button
             onClick={() => setIsModalOpen(false)}
             className="absolute top-2 right-2 text-xl text-gray-600 hover:text-gray-900"
