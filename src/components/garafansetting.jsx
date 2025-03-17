@@ -19,7 +19,7 @@ function MainDashboard() {
 
   const panelSizes = {
     9: { width: 300, height: 300 }, //cpu usage
-    14: { width: 750, height: 200 }, //process status
+    14: { width: 800, height: 200 }, //process status
     13: { width: 300, height: 300 }, // memory
 
     8: { width: 267, height: 109 }, // systen up time
