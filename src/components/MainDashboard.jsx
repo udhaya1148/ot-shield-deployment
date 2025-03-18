@@ -29,10 +29,10 @@ function MainDashboard() {
     12: { width: 267, height: 109 }, // disk free
 
     // temperature
-    21: { width: 600, height: 150 },
-    23: { width: 600, height: 150 },
-    22: { width: 600, height: 150 },
-    24: { width: 600, height: 150 },
+    21: { width: 600, height: 75 },
+    23: { width: 600, height: 75 },
+    22: { width: 600, height: 75 },
+    24: { width: 600, height: 75 },
 
     // ethernet ports
     1: { width: 267, height: 109 },
@@ -132,7 +132,7 @@ function MainDashboard() {
     <div className="flex flex-row h-screen w-screen bg-gray-50">
       <SideMenu />
       <div
-        className="flex-grow p-4 overflow-auto grid"
+        className="flex-grow p-4 overflow-auto grid bg-gray-200"
         style={{
           gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
           gridAutoRows: "min-content",
@@ -159,7 +159,7 @@ function MainDashboard() {
                   width={width}
                   height={height}
                   frameBorder="0"
-                  className="max-w-full"
+                  className="max-w-full rounded-lg"
                 ></iframe>
               ) : (
                 <LazyLoad height={height} offset={100}>
@@ -168,7 +168,7 @@ function MainDashboard() {
                     width={width}
                     height={height}
                     frameBorder="0"
-                    className="max-w-full"
+                    className="max-w-full rounded-lg"
                   ></iframe>
                 </LazyLoad>
               )}
