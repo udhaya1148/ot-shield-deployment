@@ -135,7 +135,7 @@ function MainDashboard() {
         style={{
           gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
           gridAutoRows: "min-content",
-          gap: "0.25rem", // Further reduced gap between panels
+          gap: "0.25rem", //  reduce gap between panels
         }}
       >
         {/* System heading */}
@@ -151,7 +151,7 @@ function MainDashboard() {
             <div
               key={index}
               style={{ gridColumn, gridRow }}
-              className="flex justify-center items-center p-0.5" // Further reduced padding
+              className="flex justify-center items-center p-0.5" //  reduce padding
             >
               {index < 5 ? (
                 <iframe
