@@ -18,59 +18,58 @@ function MainDashboard() {
   ];
 
   const panelSizes = {
-    9: { width: 300, height: 300 }, //cpu usage
-    14: { width: 800, height: 300 }, //process status
-    
-    13: { width: 300, height: 300 }, // memory
+    9: { width: 300, height: 300 }, // CPU usage
+    14: { width: 800, height: 300 }, // Process status
+    13: { width: 300, height: 300 }, // Memory
 
-    8: { width: 267, height: 109 }, // systen up time
-    10: { width: 267, height: 109 }, // disk total
-    11: { width: 267, height: 109 }, // disk used
-    12: { width: 267, height: 109 }, // disk free
+    8: { width: 267, height: 109 }, // System uptime
+    10: { width: 267, height: 109 }, // Disk total
+    11: { width: 267, height: 109 }, // Disk used
+    12: { width: 267, height: 109 }, // Disk free
 
-    // temperature
+    // Temperature
     21: { width: 600, height: 75 },
     23: { width: 600, height: 75 },
     22: { width: 600, height: 75 },
     24: { width: 600, height: 75 },
 
-    // ethernet ports
+    // Ethernet ports
     1: { width: 267, height: 109 },
     3: { width: 267, height: 109 },
     4: { width: 267, height: 109 },
     5: { width: 267, height: 109 },
     6: { width: 267, height: 109 },
 
-    //link speed
+    // Link speed
     20: { width: 267, height: 109 },
     25: { width: 267, height: 109 },
     26: { width: 267, height: 109 },
     27: { width: 267, height: 109 },
     28: { width: 267, height: 109 },
 
-    //IP
+    // IP
     15: { width: 267, height: 109 },
     16: { width: 267, height: 109 },
     17: { width: 267, height: 109 },
     18: { width: 267, height: 109 },
     19: { width: 267, height: 109 },
 
-    //Rx Bytes
+    // Rx Bytes
     31: { width: 267, height: 109 },
     32: { width: 267, height: 109 },
     34: { width: 267, height: 109 },
     36: { width: 267, height: 109 },
     38: { width: 267, height: 109 },
 
-    //Tx Bytes
+    // Tx Bytes
     33: { width: 267, height: 109 },
     35: { width: 267, height: 109 },
     37: { width: 267, height: 109 },
     39: { width: 267, height: 109 },
     40: { width: 267, height: 109 },
 
-    30: { width: 800, height: 150 }, //Static_ARP_Status
-    41: { width: 700, height: 150 }, //DD_to_IT speed
+    30: { width: 800, height: 150 }, // Static ARP Status
+    41: { width: 700, height: 150 }, // DD to IT speed
   };
 
   const defaultSize = { width: 450, height: 200 };
@@ -78,7 +77,7 @@ function MainDashboard() {
   const panelPositions = {
     // System
     9: { gridColumn: "1", gridRow: "2" },
-    14: { gridColumn: "2 /span 3", gridRow: "2" },
+    14: { gridColumn: "2 / span 3", gridRow: "2" },
     13: { gridColumn: "5", gridRow: "2" },
 
     8: { gridColumn: "1", gridRow: "3" },
@@ -86,10 +85,10 @@ function MainDashboard() {
     11: { gridColumn: "3", gridRow: "3" },
     12: { gridColumn: "4", gridRow: "3" },
 
-    21: { gridColumn: "1 /span 2", gridRow: "4" },
-    23: { gridColumn: "3 /span 2 ", gridRow: "4" },
+    21: { gridColumn: "1 / span 2", gridRow: "4" },
+    23: { gridColumn: "3 / span 2", gridRow: "4" },
     22: { gridColumn: "1 / span 2", gridRow: "5" },
-    24: { gridColumn: "3 /span 2", gridRow: "5" },
+    24: { gridColumn: "3 / span 2", gridRow: "5" },
 
     // Network Interface State
     1: { gridColumn: "1", gridRow: "7" },
@@ -121,9 +120,9 @@ function MainDashboard() {
     37: { gridColumn: "3", gridRow: "11" },
     39: { gridColumn: "4", gridRow: "11" },
     40: { gridColumn: "5", gridRow: "11" },
-    
-    30: { gridColumn: "1 /span 3", gridRow: "12" },
-    41: { gridColumn: "4 /span 5 ", gridRow: "12" },
+
+    30: { gridColumn: "1 / span 3", gridRow: "12" },
+    41: { gridColumn: "4 / span 2", gridRow: "12" },
   };
 
   const dashboardUrl = `http://${window.location.hostname}:3000/d-solo/de72jamksx14wa/network?orgId=1&timezone=Asia%2FKolkata&refresh=auto&theme=light`;
@@ -136,10 +135,11 @@ function MainDashboard() {
         style={{
           gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
           gridAutoRows: "min-content",
+          gap: "0.25rem", // Further reduced gap between panels
         }}
       >
         {/* System heading */}
-        <div className="col-span-5 row-start-1 text-2xl font-bold text-gray-700 pb-2 ">
+        <div className="col-span-5 row-start-1 text-2xl font-bold text-gray-700 pb-2">
           System
         </div>
 
@@ -151,7 +151,7 @@ function MainDashboard() {
             <div
               key={index}
               style={{ gridColumn, gridRow }}
-              className="flex justify-center items-center p-2 "
+              className="flex justify-center items-center p-0.5" // Further reduced padding
             >
               {index < 5 ? (
                 <iframe
@@ -176,8 +176,8 @@ function MainDashboard() {
           );
         })}
 
-        {/* Network Interface  heading */}
-        <div className="col-span-5 row-start-6 text-2xl font-bold text-gray-700 pb-2  ">
+        {/* Network Interface heading */}
+        <div className="col-span-5 row-start-6 text-2xl font-bold text-gray-700 pb-2">
           Network Interface State
         </div>
       </div>
