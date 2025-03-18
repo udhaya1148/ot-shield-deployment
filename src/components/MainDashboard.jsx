@@ -86,9 +86,9 @@ function MainDashboard() {
     12: { gridColumn: "4", gridRow: "3" },
 
     21: { gridColumn: "1 /span 2", gridRow: "4" },
-    23: { gridColumn: "3 /span 4 ", gridRow: "4" },
+    23: { gridColumn: "3 /span 2 ", gridRow: "4" },
     22: { gridColumn: "1 / span 2", gridRow: "5" },
-    24: { gridColumn: "3 /span 4", gridRow: "5" },
+    24: { gridColumn: "3 /span 2", gridRow: "5" },
 
     // Network Interface State
     1: { gridColumn: "1", gridRow: "7" },
