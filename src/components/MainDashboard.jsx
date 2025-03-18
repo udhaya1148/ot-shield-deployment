@@ -131,7 +131,7 @@ function MainDashboard() {
     <div className="flex flex-row h-screen w-screen bg-gray-50">
       <SideMenu />
       <div
-        className="flex-grow p-4 overflow-auto grid gap-4"
+        className="flex-grow p-4 overflow-auto grid"
         style={{
           gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
           gridAutoRows: "min-content",
