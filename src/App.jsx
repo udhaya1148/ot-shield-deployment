@@ -12,6 +12,9 @@ import IPAddress from "./components/IPAddress";
 import Routing from "./components/Routing";
 import Gateways from "./components/Gateways";
 import ProtectedRoute from "./components/ProtectedRoute";
+import System from "./components/System";
+import NetworkInterfacestate from "./components/NetworkInterfacestate";
+
 
 function Header() {
   const navigate = useNavigate();
@@ -57,6 +60,22 @@ function App() {
               path="/home"
               element={<ProtectedRoute element={<MainDashboard />} />}
             />
+             <Route
+              path="/arp"
+              element={<ProtectedRoute element={<ArpTable />} />}
+            />
+            <Route
+              path="/routes"
+              element={<ProtectedRoute element={<RoutesTable />} />}
+            />
+            <Route
+              path="/system"
+              element={<ProtectedRoute element={<System />} />}
+            />
+            <Route
+              path="/networkinterfacestate"
+              element={<ProtectedRoute element={<NetworkInterfacestate />} />}
+            />
             <Route
               path="/network-configuration"
               element={<ProtectedRoute element={<NetworkConfiguration />} />}
@@ -74,20 +93,12 @@ function App() {
               element={<ProtectedRoute element={<Routing />} />}
             />
             <Route
-              path="/arp"
-              element={<ProtectedRoute element={<ArpTable />} />}
-            />
-            <Route
-              path="/add-arp"
+              path="/addarp"
               element={<ProtectedRoute element={<AddStaticArp />} />}
             />
             <Route
-              path="/delete-arp"
+              path="/deletearp"
               element={<ProtectedRoute element={<DeleteArp />} />}
-            />
-            <Route
-              path="/routes"
-              element={<ProtectedRoute element={<RoutesTable />} />}
             />
             <Route
               path="/terminal"
