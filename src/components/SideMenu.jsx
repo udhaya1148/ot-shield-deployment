@@ -17,15 +17,17 @@ function SideMenu({ children }) {
       subItems: [
         { name: "ARP Table", link: "/arp" },
         { name: "Routes", link: "/routes" },
+        { name: "System", link: "/system" },
+        { name: "Network Interface State", link: "/networkinterfacestate" },
       ],
     },
     {
       name: "Settings",
       icon: MdOutlineSettings,
       subItems: [
-        {name: "Network Configuration", link: "/network-configuration"},
-        { name: "Add Static ARP", link: "/add-arp" },
-        { name: "Delete ARP", link: "/delete-arp" },
+        {name: "Network Configuration", link: "/networkconfiguration"},
+        { name: "Add Static ARP", link: "/addarp" },
+        { name: "Delete ARP", link: "/deletearp" },
       ],
     },
     { name: "Terminal", icon: IoTerminal, link: "/terminal" },
