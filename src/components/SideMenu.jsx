@@ -56,7 +56,7 @@ function SideMenu({ children }) {
         <div key={menuId}>
           <Link to={menu.link || "#"} onClick={() => menu.subItems && handleMenuClick(menuId)}>
             <div
-              className="group flex items-center gap-3.5 font-bold p-2 pl-2 hover:bg-gray-400 rounded-md cursor-pointer "
+              className="group flex items-center gap-3.5 font-bold p-2 pl-2 hover:bg-teal-400 hover:text-white rounded-md cursor-pointer "
               //   ${
               //   level > 0 ? `pl-${level * 4} ml-${level * 4}` : "" // Add padding-left and margin-left based on the nesting level
               // }`}
@@ -75,7 +75,7 @@ function SideMenu({ children }) {
   };
 
   return (
-    <div className={`${open ? "w-55" : "w-20"} duration-300 h-screen bg-gray-300 p-5`}>
+    <div className={`${open ? "w-55" : "w-20"} duration-300 h-screen bg-gray-100 p-5`}>
       <div className="py-2 flex justify-end">
         <BsFillArrowLeftCircleFill
           size={30}
