@@ -52,7 +52,7 @@ const ArpTable = () => {
       <SideMenu />
       <div className="flex-grow p-6 overflow-auto">
         <div className="border border-black p-6 bg-white rounded-lg shadow-md">
-          <h3 className="text-blue-600 text-3xl font-bold mb-4">ARP Table</h3>
+          <h3 className="text-black text-3xl font-bold mb-4">ARP Table</h3>
 
           {/* Error Display */}
           {error && (
@@ -62,7 +62,7 @@ const ArpTable = () => {
           )}
 
           {/* Table Headings */}
-          <div className="flex items-center justify-between mt-4 bg-gray-200 border border-black p-2 rounded-lg">
+          <div className="flex items-center justify-between mt-4 bg-gray-200 p-2 rounded-lg">
             <div className="font-bold flex-1">IP Address</div>
             <div className="font-bold flex-1">Hardware Type</div>
             <div className="font-bold flex-1">MAC Address</div>
@@ -76,7 +76,7 @@ const ArpTable = () => {
               {arpData.map((entry, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-2 bg-gray-100 border border-black rounded-lg mt-2"
+                  className="flex items-center justify-between p-2 bg-gray-100  rounded-lg mt-2"
                 >
                   <div className="flex-1">{entry.ip}</div>
                   <div className="flex-1">{entry.hw_type}</div>
