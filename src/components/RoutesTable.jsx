@@ -39,7 +39,7 @@ function RoutesTable() {
     <div className="flex flex-row h-screen w-screen bg-gray-100">
       <SideMenu />
       <div className="flex-grow p-5 overflow-auto mt-4 justify-center bg-gray-100">
-        <div className=" bg- white mb-2 p-3 bg-white rounded-lg shadow-lg mr-4">
+        <div className="mb-2 p-3 bg-white rounded-lg shadow-lg mr-4">
          
             <div>
               <h3 className="text-2xl text-black font-bold mt-1">
