@@ -173,7 +173,7 @@ function IPAddress() {
         <div className="bg-gray-100 p-6 relative">
           <button
             onClick={() => setIsModalOpen(false)}
-            className="absolute top-2 right-2 text-xl text-black"
+            className="absolute top-2 right-2 text-xl text-black hover:text-red-500"
             title="Close Modal"
           >
             <FaTimes />
