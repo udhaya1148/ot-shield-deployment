@@ -126,9 +126,9 @@ function IPAddress() {
   };
 
   return (
-    <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
+    <div className="flex-grow p-6 overflow-auto mt-1 justify-center">
       <div className="mb-2 p-6 bg-white rounded-lg shadow-lg">
-        <h3 className="text-3xl text-blue-600 font-bold">
+        <h3 className="text-3xl text-black font-bold">
           Configure IP Address
         </h3>
         <div className="grid grid-cols-6 bg-gray-200 p-3 mt-2 font-bold text-center rounded-lg">
@@ -153,7 +153,7 @@ function IPAddress() {
             <div className="flex justify-center">
               <button
                 onClick={() => handleInterfaceSelect(iface)}
-                className="text-blue-500 hover:text-blue-700 "
+                className="text-teal-400 "
                 title={
                   isEditable(iface)
                     ? "Edit Network Configuration"
@@ -173,7 +173,7 @@ function IPAddress() {
         <div className="bg-gray-100 p-6 relative">
           <button
             onClick={() => setIsModalOpen(false)}
-            className="absolute top-2 right-2 text-xl text-gray-600 hover:text-gray-900"
+            className="absolute top-2 right-2 text-xl text-black"
             title="Close Modal"
           >
             <FaTimes />
@@ -187,7 +187,7 @@ function IPAddress() {
               type="text"
               value={editedInterfaceName}
               disabled
-              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1  rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1  rounded-lg"
             />
           </div>
           {/* DHCP/Manual Selection */}
@@ -199,7 +199,7 @@ function IPAddress() {
             <select
               value={dhcpEnabled}
               onChange={(e) => setDhcpEnabled(e.target.value)}
-              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1  rounded-md"
+              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-lg "
             >
               <option value="DHCP">DHCP</option>
               <option value="Manual">Manual</option>
@@ -218,7 +218,7 @@ function IPAddress() {
                   value={ip}
                   onChange={(e) => setIp(e.target.value)}
                   placeholder="Enter IP Address"
-                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1  rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-lg"
                 />
               </div>
 
@@ -232,14 +232,14 @@ function IPAddress() {
                   value={subnet}
                   onChange={(e) => setSubnet(e.target.value)}
                   placeholder="Enter Subnet Mask or CIDR"
-                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1  rounded-md"
+                  className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-lg"
                 />
               </div>
             </>
           )}
           <button
             onClick={handleUpdate}
-            className="bg-blue-600 text-white p-2 rounded-md mt-4"
+            className="bg-teal-400 text-white p-2 rounded-lg mt-4"
           >
             Update
           </button>
