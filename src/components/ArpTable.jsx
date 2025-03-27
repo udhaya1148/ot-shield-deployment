@@ -48,10 +48,10 @@ const ArpTable = () => {
   }, []);
 
   return (
-    <div className="flex h-screen w-screen mt=10">
+    <div className="flex h-screen w-screen mt=10 bg-gray-100">
       <SideMenu />
-      <div className="flex-grow p-6 overflow-auto">
-        <div className="border border-black p-6 bg-white rounded-lg shadow-md">
+      <div className="flex-grow p-6 overflow-auto bg-gray-100">
+        <div className="p-6 bg-white rounded-lg shadow-md mr-4">
           <h3 className="text-black text-3xl font-bold mb-4">ARP Table</h3>
 
           {/* Error Display */}
@@ -62,12 +62,12 @@ const ArpTable = () => {
           )}
 
           {/* Table Headings */}
-          <div className="flex items-center justify-between mt-4 bg-gray-200 p-2 rounded-lg">
-            <div className="font-bold flex-1">IP Address</div>
-            <div className="font-bold flex-1">Hardware Type</div>
-            <div className="font-bold flex-1">MAC Address</div>
-            <div className="font-bold flex-1">Flags</div>
-            <div className="font-bold flex-1">Interface</div>
+          <div className="grid grid-cols-5 text-center justify-between mt-4 bg-gray-200 p-2 rounded-lg">
+            <div>IP Address</div>
+            <div>Hardware Type</div>
+            <div>MAC Address</div>
+            <div>Flags</div>
+            <div>Interface</div>
           </div>
 
           {/* Display ARP Data */}
@@ -76,7 +76,7 @@ const ArpTable = () => {
               {arpData.map((entry, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-2 bg-gray-100  rounded-lg mt-2"
+                  className="grid grid-cols-5 text-center items-center justify-between p-2 bg-gray-100  rounded-lg mt-2"
                 >
                   <div className="flex-1">{entry.ip}</div>
                   <div className="flex-1">{entry.hw_type}</div>
