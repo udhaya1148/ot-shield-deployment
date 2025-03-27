@@ -25,7 +25,7 @@ function Header() {
   };  
 
   return (
-    <h1 className="font-bold text-3xl h-14 bg-gray-300 w-screen p-2 flex items-center justify-between">
+    <h1 className="font-bold text-3xl h-14 bg-gray-100 w-screen p-2 flex items-center justify-between">
       <div className="flex items-center">
         <img
           src="https://chiefnet.io/wp-content/uploads/2022/08/Chiefnet-logo-5.svg"
@@ -38,10 +38,10 @@ function Header() {
       {location.pathname !== "/" && (
         <button
           onClick={handleLogout}
-          className="bg-red-500 text-white rounded-md hover:bg-red-600 p-2 mr-4 p-2"
+          className="text-black rounded-lg hover:bg-red-600 p-2 mr-5 p-2"
           title="Logout"
         >
-          <IoMdLogOut size={20} />
+          <IoMdLogOut size={25} />
         </button>
       )}
     </h1>
@@ -77,7 +77,7 @@ function App() {
               element={<ProtectedRoute element={<NetworkInterfacestate />} />}
             />
             <Route
-              path="/network-configuration"
+              path="/networkconfiguration"
               element={<ProtectedRoute element={<NetworkConfiguration />} />}
             />
             <Route
