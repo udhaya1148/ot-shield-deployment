@@ -51,7 +51,7 @@ function LoginPage() {
         onSubmit={handleLogin}
         className="w-full max-w-sm bg-white shadow-md rounded-lg p-8"
       >
-        <h2 className="text-2xl text-black mb-6 text-center">
+        <h2 className="text-2xl text-gray-600 mb-6 text-center font-semibold font-sans">
           Login
         </h2>
         <div className="mb-4">
@@ -76,11 +76,11 @@ function LoginPage() {
         </div>
         <button
           type="submit"
-          className="w-full bg-teal-400 text-white py-2 rounded-lg transition duration-200"
+          className="w-full bg-teal-400 text-white py-2 text-lg rounded-lg font-sans"
         >
           Login
         </button>
-        {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
+        {error && <p className="text-red-500 text-lg mt-4">{error}</p>}
       </form>
     </div>
   );
