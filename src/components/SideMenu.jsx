@@ -17,8 +17,8 @@ function SideMenu({ children }) {
       subItems: [
         { name: "ARP Table", link: "/arp" },
         { name: "Routes", link: "/routes" },
-        { name: "System", link: "/system" },
-        { name: "Network Interface State", link: "/networkinterfacestate" },
+        // { name: "System", link: "/system" },
+        // { name: "Network Interface State", link: "/networkinterfacestate" },
       ],
     },
     {
@@ -56,7 +56,7 @@ function SideMenu({ children }) {
         <div key={menuId}>
           <Link to={menu.link || "#"} onClick={() => menu.subItems && handleMenuClick(menuId)}>
             <div
-              className="group flex items-center gap-3.5 font-bold p-2 pl-2 hover:bg-teal-400 hover:text-white rounded-md cursor-pointer "
+              className="group flex items-center gap-3.5 font-bold p-2 pl-2 hover:bg-teal-400 hover:text-white rounded-lg cursor-pointer "
               //   ${
               //   level > 0 ? `pl-${level * 4} ml-${level * 4}` : "" // Add padding-left and margin-left based on the nesting level
               // }`}
@@ -75,15 +75,15 @@ function SideMenu({ children }) {
   };
 
   return (
-    <div className={`${open ? "w-55" : "w-20"} duration-300 h-screen bg-gray-100 p-5`}>
-      <div className="py-2 flex justify-end">
+    <div className={`${open ? "w-55" : "w-20"} duration-600 h-screen bg-gray-100 p-5`}>
+      <div className={`py-2 hover:bg-teal-400 hover:text-white rounded-lg flex ${open ? "justify-end":"item-center"}`}>
         <BsFillArrowLeftCircleFill
           size={30}
-          className={`cursor-pointer ${!open && "rotate-180"}`}
+          className={`cursor-pointer transition-transform duration-300 ${!open && "rotate-180"}`}
           onClick={toggleMenu}
         />
       </div>
-      <div className="mt-4 flex flex-col gap-2">{renderMenuItems(menus)}</div>
+      <div className="mt-4 space-y-3 items-center">{renderMenuItems(menus)}</div>
     </div>
   );
 }
