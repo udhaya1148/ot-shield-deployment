@@ -320,7 +320,7 @@ function Gateways() {
 
           <button
             onClick={handleUpdate}
-            className="bg-blue-600 text-white p-2 rounded-md mt-4"
+            className="bg-teal-400 text-white p-2 rounded-md mt-4"
           >
             Update
           </button>
