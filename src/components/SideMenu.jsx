@@ -58,7 +58,7 @@ function SideMenu({ children }) {
               <div className="relative">
                 {React.createElement(menu.icon || "div", { size: "20", className: "cursor-pointer" })}
                 {!open && (
-                  <span className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-xs px-2 py-1 rounded-lg whitespace-nowrap transition-opacity duration-200">
+                  <span className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-xs px-2 py-1 rounded-lg whitespace-nowrap transition-opacity duration-200 z-50">
                     {menu.name}
                   </span>
                 )}
