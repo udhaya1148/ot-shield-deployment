@@ -51,7 +51,7 @@ const HostAddresses = () => {
 
   return (
     <div className="max-w-4xl mx-auto mt-1 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-blue-600">Host Addresses</h2>
+      <h2 className="text-2xl font-bold mb-4 text-black">Host Addresses</h2>
 
       <table className="w-full border-separate border-spacing-y-2">
         <thead>
@@ -74,7 +74,7 @@ const HostAddresses = () => {
       </table>
 
       <div className="mt-6 p-4 bg-gray-200 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2 text-blue-600">
+        <h3 className="text-lg font-semibold mb-2 text-black">
           Add New Host
         </h3>
         <div className="flex space-x-2">
@@ -96,7 +96,7 @@ const HostAddresses = () => {
           />
           <button
             onClick={addHost}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 "
+            className="bg-teal-400 text-white px-4 py-2 rounded-lg"
           >
             Add
           </button>
