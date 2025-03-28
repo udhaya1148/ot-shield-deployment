@@ -129,11 +129,11 @@ const AddStaticArp = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen">
+    <div className="flex h-screen w-screen bg-gray-100">
       <SideMenu />
-      <div className="flex-grow p-6 overflow-auto">
-        <div className="border border-black p-6 bg-white rounded-lg shadow-lg">
-          <h3 className="text-blue-600 text-3xl font-bold mb-4">ARP Table</h3>
+      <div className="flex-grow p-6 overflow-auto mr-4">
+        <div className="bg-white p-6 bg-white rounded-lg shadow-lg">
+          <h3 className="text-black text-3xl font-bold mb-4">ARP Table</h3>
 
           {/* Error Display */}
           {error && (
@@ -143,12 +143,12 @@ const AddStaticArp = () => {
           )}
 
           {/* Table Headings */}
-          <div className="flex items-center justify-between mt-4 bg-gray-200 border border-black p-2 rounded-lg">
-            <div className="font-bold flex-1">IP Address</div>
-            <div className="font-bold flex-1">Hardware Type</div>
-            <div className="font-bold flex-1">MAC Address</div>
-            <div className="font-bold flex-1">Flags</div>
-            <div className="font-bold flex-1">Interface</div>
+          <div className="grid grid-cols-5 text-center font-bold mt-4 bg-gray-200 p-2 rounded-lg">
+            <div> IP Address</div>
+            <div> Hardware Type</div>
+            <div> MAC Address</div>
+            <div> Flags</div>
+            <div> Interface</div>
           </div>
 
           {/* ARP Data */}
@@ -160,7 +160,7 @@ const AddStaticArp = () => {
           {arpData.map((entry, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-2 bg-gray-100 border border-black rounded-lg mt-2"
+              className="grid grid-cols-5 items-center text-center p-2 bg-gray-100 rounded-lg mt-2"
             >
               <div className="flex-1">{entry.ip}</div>
               <div className="flex-1">{entry.hw_type}</div>
@@ -172,8 +172,8 @@ const AddStaticArp = () => {
         </div>
 
         {/* Form for Adding Static ARP Entry */}
-        <div className="border border-black p-6 bg-white rounded-lg shadow-lg mt-6">
-          <h4 className="text-xl text-blue-600 font-bold mb-4">Add Static ARP</h4>
+        <div className="p-6 bg-white rounded-lg shadow-lg mt-6 mr-4">
+          <h4 className="text-xl text-black font-bold mb-4">Add Static ARP</h4>
 
           {/* Success Message */}
           {successMessage && (
@@ -186,36 +186,38 @@ const AddStaticArp = () => {
             </div>
           )}
 
-          <div className="mb-4">
-            <label className="block text-black font-bold mb-2">
-              IP Address :
+          <div className="flex items-center mb-4">
+            <label className="text-left font-bold flex items-center justify-between">
+              <span>IP Address </span> 
+              <span> : </span>
             </label>
             <input
               type="text"
               value={ip}
               onChange={handleIpChange}
               placeholder="e.g., 192.168.0.1"
-              className="w-full p-2 border border-black rounded-lg"
+              className="bg-gray-100 px-4 ml-1 rounded-lg"
             />
             {ipError && <div className="text-red-500 text-sm">{ipError}</div>}
           </div>
 
-          <div className="mb-4">
-            <label className="block text-black font-bold mb-2">
-              MAC Address :
+          <div className="flex items-center mb-4">
+            <label className="text=left font-bold flex items-center justify-between">
+              <span> MAC Address </span>
+              <span> : </span>
             </label>
             <input
               type="text"
               value={formatMacForDisplay(mac)}
               onChange={handleMacChange}
               placeholder="e.g., AABBCCDDEEFF"
-              className="w-full p-2 border border-black rounded-lg"
+              className="bg-gray-100 ml-1 rounded-lg"
             />
           </div>
 
           <button
             onClick={handleAddStaticArp}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-teal-400 text-white px-4 py-2 rounded-lg"
           >
             Add Static ARP
           </button>
