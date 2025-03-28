@@ -28,7 +28,7 @@ function NetworkConfiguration() {
   ];
 
   return (
-    <div className="flex flex-row h-screen w-screen">
+    <div className="flex flex-row h-screen w-screen bg-gray-100">
       <SideMenu />
       <div className="flex-1 flex flex-col bg-gray-100">
         <div className="flex bg-white shadow items-center rounded-lg mr-7 ml-7 mt-4">
