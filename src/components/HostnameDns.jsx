@@ -308,7 +308,7 @@ function HostnameDns() {
               value={newHostname}
               onChange={(e) => setNewHostname(e.target.value)}
               placeholder="Enter new hostname"
-              className="h-[1.5rem] w-[16rem] bg-gray-300 outline-none px-4 ml-1 rounded-lg"
+              className="h-[1.5rem] w-[16rem] bg-white outline-none px-4 ml-1 rounded-lg"
             />
             <button
               onClick={handleUpdateHostname}
