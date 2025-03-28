@@ -69,7 +69,7 @@ function TerminalComponent() {
   }, [navigate]);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-gray-100">
       <SideMenu />
       <div
         id="terminal"
