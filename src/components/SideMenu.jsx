@@ -38,23 +38,30 @@ function SideMenu({ children }) {
     });
   };
 
-  const handleMenuClick = (menuId) => {
+  const handleMenuClick = (menuId, hasSubItems, event) => {
     if (!open) {
       toggleMenu();
     }
-    setActiveMenus((prev) =>
-      prev.includes(menuId) ? prev.filter((id) => id !== menuId) : [...prev, menuId]
-    );
+    if (hasSubItems) {
+      event.preventDefault(); // Prevent navigation for expandable menus
+      setActiveMenus((prev) =>
+        prev.includes(menuId) ? prev.filter((id) => id !== menuId) : [...prev, menuId]
+      );
+    }
   };
 
-  const renderMenuItems = (menuItems, parentId = "", level = 0) => {
+  const renderMenuItems = (menuItems, parentId = "") => {
     return menuItems.map((menu, index) => {
       const menuId = parentId ? `${parentId}-${index}` : `${index}`;
+      const hasSubItems = !!menu.subItems;
+
       return (
         <div key={menuId}>
-          <div
-            onClick={() => menu.subItems && handleMenuClick(menuId)}
-            className="relative group flex items-center justify-between gap-3.5 font-bold p-2 pl-2 hover:bg-teal-400 hover:text-white rounded-lg cursor-pointer"
+          {/* Wrap menu item in Link if it has a direct link */}
+          <Link
+            to={menu.link || "#"}
+            className="relative group flex items-center justify-between gap-3.5 font-bold p-2 pl-2 hover:bg-teal-400 hover:text-white rounded-lg cursor-pointer w-full"
+            onClick={(e) => handleMenuClick(menuId, hasSubItems, e)}
           >
             <div className="flex items-center gap-3">
               {React.createElement(menu.icon || "div", { size: "20", className: "cursor-pointer" })}
@@ -65,20 +72,22 @@ function SideMenu({ children }) {
               )}
               <h2 className={`${!open && "hidden"} whitespace-pre`}>{menu.name}</h2>
             </div>
-            {menu.subItems && open && (
+            {hasSubItems && open && (
               <BsChevronDown
                 size={15}
                 className={`transition-transform duration-300 ${activeMenus.includes(menuId) ? "rotate-180" : ""}`}
               />
             )}
-          </div>
-          {activeMenus.includes(menuId) && open && menu.subItems && (
+          </Link>
+
+          {/* Render submenus */}
+          {activeMenus.includes(menuId) && open && hasSubItems && (
             <div className="ml-5 space-y-2">
               {menu.subItems.map((subMenu, subIndex) => (
                 <Link
                   key={subIndex}
                   to={subMenu.link}
-                  className="block pl-4 py-1 text-black hover:text-white hover:bg-teal-500 rounded-lg"
+                  className="block pl-4 py-1 text-black font-semibold hover:text-white hover:bg-teal-500 rounded-lg"
                 >
                   {subMenu.name}
                 </Link>
