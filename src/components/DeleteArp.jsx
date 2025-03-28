@@ -18,10 +18,9 @@ const DeleteArp = () => {
     return () => {
       document.body.style.overflowX = "auto";
       document.body.style.overflowY = "auto";
-
     };
   }, []);
-  
+
   // Function to fetch ARP data
   const fetchArpData = async () => {
     try {
@@ -107,24 +106,27 @@ const DeleteArp = () => {
   }, []);
 
   return (
-    <div className="flex flex-row h-screen w-screen">
+    <div className="flex flex-row h-screen w-screen bg-gray-100">
       <SideMenu />
-      <div className="flex-grow p-6 overflow-auto mt-4 justify-center">
+      <div className="flex-grow p-6 overflow-auto mr-4">
         {/* Error Display */}
         {error && <div className="text-red-500 mb-4">{error}</div>}
 
         {/* Success Message Display */}
-        {successMessage && <div className="text-green-500 mb-4">{successMessage}</div>}
+        {successMessage && (
+          <div className="text-green-500 mb-4">{successMessage}</div>
+        )}
 
         {/* ARP Table Display */}
-        <div className="border border-black mb-4 p-6 bg-white rounded-lg shadow-lg">
-          <h3 className="text-blue-600 text-3xl font-bold">ARP Table</h3>
-          <div className="flex items-center justify-between mt-4 bg-gray-200 border border-black p-2 rounded">
-            <div className="font-bold flex-1">IP Address</div>
-            <div className="font-bold flex-1">Hardware Type</div>
-            <div className="font-bold flex-1">MAC Address</div>
-            <div className="font-bold flex-1">Flags</div>
-            <div className="font-bold flex-1">Interface</div>
+        <div className=" p-6 bg-white rounded-lg shadow-lg">
+          <h3 className="text-black text-3xl font-bold mb-4">ARP Table</h3>
+
+          <div className="grid grid-cols-5 text-center font-bold mt-4 bg-gray-200 p-2 rounded-lg">
+            <div> IP Address</div>
+            <div> Hardware Type</div>
+            <div> MAC Address</div>
+            <div> Flags</div>
+            <div> Interface</div>
           </div>
           {arpData?.length === 0 && (
             <div className="text-center text-gray-500 mt-4">
@@ -134,7 +136,7 @@ const DeleteArp = () => {
           {arpData.map((entry, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-2 bg-gray-100 border border-black rounded-lg mt-2"
+              className="grid grid-cols-5 items-center text-center p-2 bg-gray-100 rounded-lg mt-2"
             >
               <div className="flex-1">{entry.ip}</div>
               <div className="flex-1">{entry.hw_type}</div>
@@ -146,26 +148,29 @@ const DeleteArp = () => {
         </div>
 
         {/* Form for Deleting Static ARP Entry */}
-        <div className="border border-gray-500 p-4 bg-white rounded-lg shadow-lg">
-          <h4 className="text-xl text-red-600 font-bold mb-2">
+        <div className="p-6 bg-white rounded-lg shadow-lg mr-4 mt-6">
+          <h4 className="text-xl text-black font-bold mb-4">
             Delete Static ARP
           </h4>
 
-          <div className="mb-4">
-            <label className="block font-bold">IP Address</label>
+          <div className="flex items-center mb-4">
+            <label className="text-left font-bold flex items-center justify-between">
+              <span>IP Address </span>
+              <span> : </span>
+            </label>
             <input
               type="text"
               value={ip}
               onChange={handleIpChange}
               placeholder="e.g., 192.168.0.1"
-              className="w-full p-2 border border-black rounded-lg"
+              className="bg-gray-100 px-4 ml-1 rounded-lg"
             />
             {ipError && <div className="text-red-500 text-sm">{ipError}</div>}
           </div>
 
           <button
             onClick={handleDeleteStaticArp}
-            className="bg-red-600 text-white rounded-lg p-2"
+            className="bg-teal-400 text-white rounded-lg p-2"
           >
             Delete ARP Entry
           </button>
