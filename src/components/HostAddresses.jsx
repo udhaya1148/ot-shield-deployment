@@ -6,6 +6,18 @@ const HostAddresses = () => {
   const [newHost, setNewHost] = useState({ ip: "", hostnames: "" });
 
   useEffect(() => {
+    // Disable scrolling when the component is mounted
+    document.body.style.overflowX = "hidden";
+    document.body.style.overflowY = "auto";
+
+    // Enable scrolling when the component is unmounted
+    return () => {
+      document.body.style.overflowX = "auto";
+      document.body.style.overflowY = "auto";
+    };
+  }, []);
+
+  useEffect(() => {
     fetchHosts();
     //check update for every 5 sec
     const interval = setInterval(fetchHosts, 5000);
@@ -50,6 +62,7 @@ const HostAddresses = () => {
   // };
 
   return (
+    <div>
     <div className="max-w-4xl mx-auto mt-1 p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-bold mb-4 text-black">Host Addresses</h2>
 
@@ -72,8 +85,9 @@ const HostAddresses = () => {
           ))}
         </tbody>
       </table>
+      </div>
 
-      <div className="mt-6 p-4 bg-gray-200 rounded-lg">
+      <div className="max-w-4xl mx-auto p-4 bg-white mt-4 shadow-lg rounded-lg">
         <h3 className="text-lg font-semibold mb-2 text-black">
           Add New Host
         </h3>
@@ -83,7 +97,7 @@ const HostAddresses = () => {
             placeholder="IP Address"
             value={newHost.ip}
             onChange={(e) => setNewHost({ ...newHost, ip: e.target.value })}
-            className="bg-gray-300 px-3 py-2 rounded-lg w-1/3"
+            className="bg-gray-100 px-3 py-2 rounded-lg w-1/3"
           />
           <input
             type="text"
@@ -92,7 +106,7 @@ const HostAddresses = () => {
             onChange={(e) =>
               setNewHost({ ...newHost, hostnames: e.target.value })
             }
-            className="bg-gray-300 px-3 py-2 rounded-lg w-1/2"
+            className="bg-gray-100 px-3 py-2 rounded-lg w-1/2"
           />
           <button
             onClick={addHost}
