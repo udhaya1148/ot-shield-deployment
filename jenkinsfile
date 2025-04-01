@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Update and Upgrade OS') {
+            steps {
+                sh '''
+                    sudo apt update -y
+                    sudo apt upgrade -y
+                    sudo apt install -y net-tools
+                '''
+            }
+        }
+        
+        stage('Clone Project') {
+            steps {
+                sh '''
+                    git clone https://github.com/udhaya1148/Chiefnet-OT-Shield-version-1.0.git
+                    sudo mv Chiefnet-OT-Shield-version-1.0 Chiefnet-OT-Shield
+                '''
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                    cd Chiefnet-OT-Shield  
+                    sudo chmod +x dependencies.sh
+                    ./dependencies.sh
+                '''
+            }
+        }
+        
+        stage('Setup Services') {
+            steps {
+                sh '''
+                    cd /usr/bin/Chiefnet-OT-Shield
+                    sudo chmod +x /usr/bin/Chiefnet-OT-Shield/Scripts/*.sh
+                    sudo chmod +x start-service.sh
+                    sudo ./start-service.sh
+                '''
+            }
+        }
+        
+        stage('Deploy Application') {
+            steps {
+                sh '''
+                    echo "Deploying the application..."
+                    sudo systemctl restart Chiefnet-OT-Shield.service
+                    echo "Deployment completed!"
+                '''
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+            echo 'Access the UI at http://<ip>:5050'
+        }
+        failure {
+            echo 'Pipeline failed! Please check the logs.'
+        }
+    }
+}
