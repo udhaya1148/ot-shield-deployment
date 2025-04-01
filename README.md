@@ -71,8 +71,7 @@ Use `<ip>:5050` to open the UI in your browser.
 
 
 
-grafana api key 
-glsa_lDw3cKSGpahtDfm16DlUDktTeReGV1dD_24b9203c
+
 
 
 
