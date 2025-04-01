@@ -32,10 +32,7 @@ sudo apt install net-tools
   ```
   udhaya1148
   ```
- ## password : 
-  ```
-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
-  ```
+ 
 ## Change file name as Chiefnet-OT-Shield
 ```
 sudo mv Chiefnet-OT-Shield-version-1.0 Chiefnet-OT-Shield
