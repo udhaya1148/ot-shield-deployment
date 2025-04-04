@@ -516,7 +516,7 @@ def setup_network_for_first_time():
                 "dhcp4": False,
                 "dhcp6": False
             },
-            "enp2s0": {
+            "enp0s3": {
                 "dhcp4": True,
                 "dhcp6": True
             },
