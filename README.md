@@ -26,7 +26,7 @@ sudo apt install net-tools
 
   ## Import project
   ```
- git clone https://github.com/udhaya1148/Chiefnet-OT-Shield-version-1.0.git
+ https://github.com/udhaya1148/ot-shield-deployment.git
   ```
   ## User name : 
   ```
@@ -35,7 +35,7 @@ sudo apt install net-tools
  
 ## Change file name as Chiefnet-OT-Shield
 ```
-sudo mv Chiefnet-OT-Shield-version-1.0 Chiefnet-OT-Shield
+sudo mv ot-shield-deployment Chiefnet-OT-Shield
 ```
 
   ## Install dependencies
