@@ -65,6 +65,7 @@ if [ -d "$BASE_PATH" ]; then
     npm install xterm
     npm install socket.io-client
 #    npm install xterm-css
+    npm install react-lazyload 
 
     # Install TailwindCSS
     # Install TailwindCSS
