@@ -17,8 +17,8 @@ sudo ./routes-service.sh
 echo "Running ui-script.sh..."
 sudo ./ui-service.sh
 
-echo "Running default-config-script.sh..."
-sudo ./default-config-service.sh
+#echo "Running default-config-script.sh..."
+#sudo ./default-config-service.sh
 
 echo "Running terminal.sh..."
 sudo ./terminal-service.sh
