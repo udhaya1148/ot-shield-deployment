@@ -48,4 +48,3 @@ echo "Reloading systemd and starting the service..."
 sudo systemctl daemon-reload
 sudo systemctl enable terminal.service
 sudo systemctl start terminal.service
-netcon@netcon:/usr/bin/Chiefnet-OT-Shield/S
