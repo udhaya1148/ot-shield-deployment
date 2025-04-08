@@ -68,7 +68,9 @@ Use `<ip>:5050` to open the UI in your browser.
 
 ## Press ALT+SHIFT+D to reset default netplan configuration
 
+192.168.171.101
 
+127.0.0.53
 
 
 
